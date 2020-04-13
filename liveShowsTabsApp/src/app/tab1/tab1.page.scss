@@ -1,0 +1,54 @@
+ion-content{
+  --background:#eaeaea;
+}
+
+ion-card{
+  --background:#fff;
+}
+.eventcard{
+  .month{
+      color: rgb(65, 211, 155);
+  }
+  .venue{
+      color: rgb(87, 85, 85);
+      margin-top: 6px;
+  }
+  color: black;
+  .seperator{
+      height: 60px;;
+  }
+  .name{
+      padding-left: 10px!important;
+  }
+  ion-col{
+      vertical-align: center;
+  }
+  .btn{
+      border-radius: 5px;
+      height: 38px!important;
+      width: 80px;
+      color: white;
+      background-color: rgb(65, 211, 155)
+  }
+  .righttext{
+      text-align: right;
+  }
+}
+
+.seperator{
+  width:1px;;
+  height: 30px;
+  background-color: rgb(212, 194, 194);
+  align-self: center;
+  margin-left: 0px
+} 
+
+.hor-seperator{
+  width: 100%;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  background-color: rgb(224, 224, 224);
+  align-self: center;
+  margin-left: 4px
+}

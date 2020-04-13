@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar color='danger'>
+    <ion-title>
+      ViewTube
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<!--Code for our content starts here -->
+
+<ion-content>
+  <ion-card class="eventcard" (click)='viewVideo(event)' *ngFor="let event of videos" margin-bottom>
+      <ion-img (click)='viewVideo(event)' [src]="event.snippet.thumbnails.medium.url"></ion-img>
+      <ion-card-content (click)='viewVideo(event)'>
+        <ion-row >
+          <ion-col size="7" class="name"><h2><strong>{{event.snippet.title}}</strong></h2><h4 class="venue">{{event.snippet.ExplosmEntertainment}}</h4></ion-col>
+        </ion-row>
+        <div class="hor-seperator"></div>
+        <ion-row>
+          <ion-col size="6"><ion-badge color="light">{{event.snippet.description}}</ion-badge></ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+</ion-content>
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button (click)="goBack()">
+      <ion-icon name="triangle"></ion-icon>
+      <ion-label>Tab 1</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

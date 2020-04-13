@@ -1,0 +1,19 @@
+<ion-header >
+  <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+          <ion-menu-button color="light"></ion-menu-button>
+      </ion-buttons>
+    <ion-title class="title-ios" text-uppercase>Image Grid</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <div no-padding *ngFor="let p of gridImages">
+        <div (click)='getLiveVideos(p.id)' class="square-grid" [ngStyle]="{'background-image': 'url('+p.image+')'}">
+        </div>
+      </div>
+    </ion-row>
+  </ion-grid>
+</ion-content>

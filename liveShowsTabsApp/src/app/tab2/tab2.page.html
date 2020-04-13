@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color='danger'>
+    <ion-title>
+      ViewTube
+    </ion-title>
+  </ion-toolbar>
+  <!--Code for our second navbar starts here. Navbars are fixed. so if you want this to scroll with the page place in ion-content-->
+  <ion-toolbar color='danger'>
+    <ion-item>
+     <ion-icon item-left color='danger' name='logo-youtube'></ion-icon>
+      <!--Code for our dropdown with ngFor to iterate through our categories and form a ion-select for each one -->
+      <ion-select placeholder='Choose a category...' item-left [(ngModel)]="category" (ionChange)="filter(category)">
+        <ion-select-option *ngFor="let category of categoryArray" [value]="category.id">{{category.snippet.title}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+<!--Code for our content starts here -->
+<ion-content>
+  <ion-list no-lines>
+    <ion-item (click)='viewVideo(vid.snippet.channelId)' *ngFor="let vid of videos">
+      <li *ngIf="vid.snippet.liveBroadcastContent !== 'none'">
+          <h2>{{vid.snippet.title}}</h2>
+          <p>{{ vid.snippet.liveBroadcastContent }}</p>
+      </li>
+      </ion-item>
+</ion-list>
+</ion-content>
