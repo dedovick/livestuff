@@ -155,93 +155,27 @@ export class YtService {
 
   events = [
     {
-        artista: 'Bruno & Marrone',
-        idYoutube: 'UCdTX5ycRKPvTUiGu1519u4g',
-        data: new Date("12-04-2020"),
-        type: 'show',
-        time: '20',
-        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
-        title: 'Título',
-        status: 'offline',
-        videoId: '6esCKTJoM4M'
-    },
-    {
-        artista: 'Zé Neto & Cristiano',
-        idYoutube: 'UCRRu9OXVYd5clj2Bs29gUVQ',
-        data: new Date("12-04-2020"),
-        type: 'show',
-        time: '18',
-        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
-        title: 'Título',
-        status: 'online',
-        videoId: '6esCKTJoM4M'
-    },
-    {
-        artista: 'Wesley Safadão',
-        idYoutube: 'UCYiAUICnsj880ou7j80U6vg',
-        data: new Date("12-04-2020"),
-        type: 'show',
-        time: '20',
-        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
-        title: 'Título',
-        status: 'online',
-        videoId: '6esCKTJoM4M'
-    },
-    {
-        artista: 'Matheus e Kauan',
-        idYoutube: 'UC4WvVh0AwJ6K9w1JLepce7A',
-        data: new Date("12-04-2020"),
-        type: 'show',
-        time: '16',
-        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
-        title: 'Título',
-        status: 'offline',
-        videoId: '6esCKTJoM4M'
-    },
-    {
-        artista: 'Michel Teló',
-        idYoutube: 'UCs0vNuS1IQ0hCMgrD8ACjAg',
-        data: new Date("12-04-2020"),
-        type: 'show',
-        time: '20',
-        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
-        title: 'Título',
-        status: 'offline',
-        videoId: '6esCKTJoM4M'
-    },
-    {
         artista: 'Henrique e Juliano',
         idYoutube: 'UCfLTxnQboSLcoSakgONmukQ',
-        data: new Date("12-04-2020"),
+        data: new Date(2020, 4, 19),
         type: 'show',
         time: '18',
-        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        largeimage: 'https://i.ytimg.com/vi/wMlFBxoJ1lo/mqdefault_live.jpg',
         title: 'Título',
-        status: 'offline',
-        videoId: '6esCKTJoM4M'
+        status: 'online',
+        videoId: 'wMlFBxoJ1lo'
     },
     {
         artista: 'Gustavo Mioto',
         idYoutube: 'UCCCIzjqbX7psrn0HYG50phg',
-        data: new Date("12-04-2020"),
+        data: new Date(2020, 4, 25),
         type: 'show',
         time: '20',
-        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        largeimage: 'https://i.ytimg.com/vi/jtOOelczhMA/mqdefault_live.jpg',
         title: 'Título',
-        status: 'offline',
-        videoId: '6esCKTJoM4M'
-    },
-    {
-        artista: 'Luan Santana',
-        idYoutube: 'UC6rwiIxv0w2fbmmr66wl1rA',
-        data: new Date("12-04-2020"),
-        type: 'show',
-        time: '18',
-        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
-        title: 'Título',
-        status: 'offline',
-        videoId: '6esCKTJoM4M'
-    },
+        status: 'online',
+        videoId: 'jtOOelczhMA'
+    }
 
 ]
   apiKey = 'AIzaSyDtbEKEUxgJb1TeugAVKTFIuTJmYocnvbE';
