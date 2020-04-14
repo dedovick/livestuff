@@ -10,7 +10,7 @@
 
 <ion-content>
   <ion-card class="eventcard" *ngFor="let event of events" margin-bottom>
-      <ion-img [src]="event.largeimage"></ion-img>
+      <ion-img [src]="event.largeimage" class="img-list"></ion-img>
       <ion-card-content>
         <ion-row >
           <ion-col size="2"><h2 class="month">{{event.data.getMonth()}}</h2><h1>{{event.data.getFullYear()}}</h1><h3>{{event.data.getDay()}}</h3></ion-col>
