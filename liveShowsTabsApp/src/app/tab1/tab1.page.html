@@ -16,7 +16,8 @@
           <ion-col size="2"><h2 class="month">{{event.data.getMonth()}}</h2><h1>{{event.data.getFullYear()}}</h1><h3>{{event.data.getDay()}}</h3></ion-col>
           <div class="seperator"></div>
           <ion-col size="7" class="name"><h2><strong>{{event.artista}}</strong></h2><h4 class="venue">{{event.title}}</h4></ion-col>
-          <ion-col size="2"><button ion-button color="greenish" class="btn" >BOOK</button></ion-col>
+          <ion-col *ngIf="event.status === 'offline'" size="2"><button ion-button color="greenish" class="btn" >BOOK</button></ion-col>
+          <ion-col *ngIf="event.status === 'online'" size="2"><button ion-button color="red" class="btnlive" (click)='callYoutube(event.videoId)'>LIVE</button></ion-col>
         </ion-row>
         <div class="hor-seperator"></div>
         <ion-row>

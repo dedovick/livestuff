@@ -157,74 +157,90 @@ export class YtService {
     {
         artista: 'Bruno & Marrone',
         idYoutube: 'UCdTX5ycRKPvTUiGu1519u4g',
-        data: new Date("2020-04-09"),
+        data: new Date("12-04-2020"),
         type: 'show',
         time: '20',
-        largeimage: '',
-        title: ''
+        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        title: 'Título',
+        status: 'offline',
+        videoId: '6esCKTJoM4M'
     },
     {
         artista: 'Zé Neto & Cristiano',
         idYoutube: 'UCRRu9OXVYd5clj2Bs29gUVQ',
-        data: new Date("2020-04-12"),
+        data: new Date("12-04-2020"),
         type: 'show',
         time: '18',
-        largeimage: '',
-        title: ''
+        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        title: 'Título',
+        status: 'online',
+        videoId: '6esCKTJoM4M'
     },
     {
         artista: 'Wesley Safadão',
         idYoutube: 'UCYiAUICnsj880ou7j80U6vg',
-        data: new Date("2020-04-18"),
+        data: new Date("12-04-2020"),
         type: 'show',
         time: '20',
-        largeimage: '',
-        title: ''
+        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        title: 'Título',
+        status: 'online',
+        videoId: '6esCKTJoM4M'
     },
     {
         artista: 'Matheus e Kauan',
         idYoutube: 'UC4WvVh0AwJ6K9w1JLepce7A',
-        data: new Date("2020-04-11"),
+        data: new Date("12-04-2020"),
         type: 'show',
         time: '16',
-        largeimage: '',
-        title: ''
+        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        title: 'Título',
+        status: 'offline',
+        videoId: '6esCKTJoM4M'
     },
     {
         artista: 'Michel Teló',
         idYoutube: 'UCs0vNuS1IQ0hCMgrD8ACjAg',
-        data: new Date("2020-04-12"),
+        data: new Date("12-04-2020"),
         type: 'show',
         time: '20',
-        largeimage: '',
-        title: ''
+        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        title: 'Título',
+        status: 'offline',
+        videoId: '6esCKTJoM4M'
     },
     {
         artista: 'Henrique e Juliano',
         idYoutube: 'UCfLTxnQboSLcoSakgONmukQ',
-        data: new Date("2020-04-19"),
+        data: new Date("12-04-2020"),
         type: 'show',
         time: '18',
-        largeimage: '',
-        title: ''
+        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        title: 'Título',
+        status: 'offline',
+        videoId: '6esCKTJoM4M'
     },
     {
         artista: 'Gustavo Mioto',
         idYoutube: 'UCCCIzjqbX7psrn0HYG50phg',
-        data: new Date("2020-04-25"),
+        data: new Date("12-04-2020"),
         type: 'show',
         time: '20',
-        largeimage: '',
-        title: ''
+        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        title: 'Título',
+        status: 'offline',
+        videoId: '6esCKTJoM4M'
     },
     {
         artista: 'Luan Santana',
         idYoutube: 'UC6rwiIxv0w2fbmmr66wl1rA',
-        data: new Date("2020-04-26"),
+        data: new Date("12-04-2020"),
         type: 'show',
         time: '18',
-        largeimage: '',
-        title: ''
+        largeimage: 'https://yt3.ggpht.com/a/AATXAJw0LUTJ_RUsfr8Fo_ZjoiCFZF8_kADrzajxAQ=s288-c-k-c0xffffffff-no-rj-mo',
+        title: 'Título',
+        status: 'offline',
+        videoId: '6esCKTJoM4M'
     },
 
 ]
@@ -281,7 +297,7 @@ export class YtService {
 
   getEvents() {
     // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < this.events.length; i++) {
+    /*for (let i = 0; i < this.events.length; i++) {
       const aux = i;
       const temp = this.getLiveBroadcast(this.events[i]);
       temp.subscribe(data => {
@@ -304,7 +320,7 @@ export class YtService {
           });
         }
       });
-    }
+    }*/
     return this.events;
   }
 }
