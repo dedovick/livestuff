@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { YtService } from './services/yt/yt.service'; // Youtube provider import
 import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
 import { HttpClientModule } from '@angular/common/http';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +24,7 @@ import { HttpClientModule } from '@angular/common/http';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     YtService,
     YoutubeVideoPlayer,
+    SocialSharing
   ],
   bootstrap: [AppComponent]
 })

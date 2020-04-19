@@ -1,3 +1,8 @@
 https://www.jambase.com/livestreams
 https://xpn.org/events/concert-calendar
 https://www.billboard.com/articles/columns/pop/9335531/coronavirus-quarantine-music-events-online-streams
+
+
+
+To find scheduled live events on a channel, use the search endpoint with a channelId, type=video and eventType=upcoming
+To retrieve the start time of an upcoming event, use the videos endpoint with part=liveStreamingDetails

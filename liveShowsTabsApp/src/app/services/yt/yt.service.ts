@@ -157,27 +157,26 @@ export class YtService {
     {
         artista: 'Henrique e Juliano',
         idYoutube: 'UCfLTxnQboSLcoSakgONmukQ',
-        data: new Date(2020, 4, 19),
-        type: 'show',
+        data: new Date('2020-4-19'),
+        type: 'sertanejo',
         time: '18',
         largeimage: 'https://i.ytimg.com/vi/wMlFBxoJ1lo/mqdefault_live.jpg',
         title: 'Título',
-        status: 'online',
+        status: 'offline',
         videoId: 'wMlFBxoJ1lo'
     },
     {
         artista: 'Gustavo Mioto',
         idYoutube: 'UCCCIzjqbX7psrn0HYG50phg',
-        data: new Date(2020, 4, 25),
-        type: 'show',
+        data: new Date('2020-4-25'),
+        type: 'clássica',
         time: '20',
         largeimage: 'https://i.ytimg.com/vi/jtOOelczhMA/mqdefault_live.jpg',
         title: 'Título',
-        status: 'online',
+        status: 'offline',
         videoId: 'jtOOelczhMA'
     }
-
-]
+  ];
   apiKey = 'AIzaSyDtbEKEUxgJb1TeugAVKTFIuTJmYocnvbE';
 
   constructor(private http: HttpClient) { }
@@ -229,7 +228,7 @@ export class YtService {
     });*/
   }
 
-  getEvents() {
+  getEvents(data) {
     // tslint:disable-next-line:prefer-for-of
     /*for (let i = 0; i < this.events.length; i++) {
       const aux = i;
@@ -255,6 +254,14 @@ export class YtService {
         }
       });
     }*/
-    return this.events;
+    if (data === undefined) {
+      return this.events.sort((a, b) => (a.data > b.data) ? 1 : -1);
+    } else {
+      console.log(data.getDate());
+      this.events.forEach(event => {
+        console.log(event.data.getDate());
+      });
+      return this.events.filter(event => event.data.getDate() === data.getDate());
+    }
   }
 }

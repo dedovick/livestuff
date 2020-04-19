@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { YtService } from '../services/yt/yt.service';
 import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
 import { Platform } from '@ionic/angular';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @Component({
   selector: 'app-tab1',
@@ -10,11 +11,27 @@ import { Platform } from '@ionic/angular';
 })
 export class Tab1Page {
 
-  today = new Date().getDate;
+  data = undefined;
+  message = 'Assista a live de ';
+  youtubeUrl = 'https://www.youtube.com/watch?v=';
+  selectedData = undefined;
   events = [];
+  selectedCat = [];
+  categorias = [
+    'sertanejo',
+    'rock',
+    'hip hop',
+    'clássica',
+    'eletrônica',
+    'pop',
+    'rap'
+  ];
+
+
   constructor(private ytService: YtService, public plt: Platform,
-              private youtube: YoutubeVideoPlayer) {
-    this.events = this.ytService.getEvents();
+              private youtube: YoutubeVideoPlayer, private socialSharing: SocialSharing) {
+    // this.events = this.ytService.getEvents(new Date('2020-4-19'));
+    this.events = this.ytService.getEvents(this.data);
   }
 
   callYoutube(videoId) {
@@ -24,5 +41,27 @@ export class Tab1Page {
       } else {
         window.open('https://www.youtube.com/watch?v=' + videoId);
       }
+  }
+
+  updateMyDate() {
+    this.data = new Date(this.selectedData);
+    this.data.setDate(this.data.getDate());
+    this.events = this.ytService.getEvents(this.data);
+  }
+
+  sendShare(event) {
+    this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.videoId);
+  }
+
+  setCategoria(cat) {
+    console.log('teste');
+    if (this.selectedCat.indexOf(cat) > -1) {
+      console.log('teste OK');
+      const index = this.selectedCat.indexOf(cat);
+      this.selectedCat.splice(index, 1);
+    } else {
+      console.log('teste NOK');
+      this.selectedCat.push(cat);
+    }
   }
 }
