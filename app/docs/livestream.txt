@@ -1,3 +1,7 @@
 https://github.com/typicode/lowdb
 
 https://www.pluralsight.com/guides/exposing-your-local-node-js-app-to-the-world
+
+https://www.npmjs.com/package/node-schedule
+
+https://github.com/axios/axios
