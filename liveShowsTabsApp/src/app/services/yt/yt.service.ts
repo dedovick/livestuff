@@ -254,7 +254,7 @@ export class YtService {
         }
       });
     }*/
-    if (data === undefined) {
+    /*if (data === undefined) {
       return this.events.sort((a, b) => (a.data > b.data) ? 1 : -1);
     } else {
       console.log(data.getDate());
@@ -262,6 +262,12 @@ export class YtService {
         console.log(event.data.getDate());
       });
       return this.events.filter(event => event.data.getDate() === data.getDate());
+    }*/
+    console.log(data);
+    if (data === undefined) {
+      return this.http.get('https://live-stuff-server.herokuapp.com/events');
+    } else {
+      return this.http.get('https://live-stuff-server.herokuapp.com/events/' + data);
     }
   }
 }

@@ -15,7 +15,7 @@ export class Tab1Page {
   message = 'Assista a live de ';
   youtubeUrl = 'https://www.youtube.com/watch?v=';
   selectedData = undefined;
-  events = [];
+  events;
   selectedCat = [];
   categorias = [
     'sertanejo',
@@ -31,7 +31,10 @@ export class Tab1Page {
   constructor(private ytService: YtService, public plt: Platform,
               private youtube: YoutubeVideoPlayer, private socialSharing: SocialSharing) {
     // this.events = this.ytService.getEvents(new Date('2020-4-19'));
-    this.events = this.ytService.getEvents(this.data);
+    const res = this.ytService.getEvents(this.data);
+    res.subscribe(data => {
+      this.events = data;
+    });
   }
 
   callYoutube(videoId) {
@@ -44,9 +47,11 @@ export class Tab1Page {
   }
 
   updateMyDate() {
-    this.data = new Date(this.selectedData);
-    this.data.setDate(this.data.getDate());
-    this.events = this.ytService.getEvents(this.data);
+    const res = this.ytService.getEvents(this.selectedData.substring(0, 10));
+    res.subscribe(data => {
+      console.log(data);
+      this.events = data;
+    });
   }
 
   sendShare(event) {

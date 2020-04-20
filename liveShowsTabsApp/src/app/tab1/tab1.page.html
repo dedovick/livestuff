@@ -17,7 +17,7 @@
       <ion-img [src]="event.largeimage" class="img-list"></ion-img>
       <ion-card-content>
         <ion-row >
-          <ion-col size="2"><h1 class="month">{{event.data.getDate()}}</h1><h2 class="month">{{event.data.getMonth() + 1}}</h2><h3 class="month">{{event.data.getFullYear()}}</h3></ion-col>
+          <ion-col size="2"><h1 class="month">{{event.data.substring(8,10)}}</h1><h2 class="month">{{event.data.substring(5,7)}}</h2><h3 class="month">{{event.data.substring(0, 4)}}</h3></ion-col>
           <div class="seperator"></div>
           <ion-col size="7" class="name"><h2><strong>{{event.artista}}</strong></h2><h4 class="venue">{{event.title}}</h4></ion-col>
           <ion-col *ngIf="event.status === 'offline'" size="2">
