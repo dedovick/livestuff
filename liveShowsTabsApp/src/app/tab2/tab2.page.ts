@@ -9,8 +9,8 @@ import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
-  private categoryArray;
-  private videos = [];
+  categoryArray;
+  videos = [];
   constructor(public ytProvider: YtService,
               public alertCtrl: AlertController,
               public modalCtrl: ModalController, public plt: Platform, private youtube: YoutubeVideoPlayer) {

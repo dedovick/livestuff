@@ -9,7 +9,7 @@
     <ion-item>
      <ion-icon item-left color='danger' name='logo-youtube'></ion-icon>
       <!--Code for our dropdown with ngFor to iterate through our categories and form a ion-select for each one -->
-      <ion-select placeholder='Choose a category...' item-left [(ngModel)]="category" (ionChange)="filter(category)">
+      <ion-select placeholder='Choose a category...' item-left>
         <ion-select-option *ngFor="let category of categoryArray" [value]="category.id">{{category.snippet.title}}</ion-select-option>
       </ion-select>
     </ion-item>

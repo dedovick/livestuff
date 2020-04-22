@@ -138,3 +138,19 @@ ion-chip {
     display: none;
   }
 }
+
+.data-picker {
+  width: 65%;
+  background-color: darkgrey;
+  border: 1px solid rgba(56, 245, 239, 0.74);
+  height: 80%;
+  color: white;
+}
+
+.btnlive{
+  border-radius: 5px;
+  height: 80%!important;
+  width: 32px;
+  color: white;
+  background-color: rgb(199, 39, 47)
+}

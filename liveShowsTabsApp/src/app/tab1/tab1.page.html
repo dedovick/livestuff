@@ -2,8 +2,11 @@
   <ion-toolbar>
     <ion-item>
       <ion-label>Data:</ion-label>
-    <ion-datetime displayFormat="DD-MM-YYYY" pickerFormat="DD MM YYYY" value="{{data}" (ionChange)="updateMyDate()" [(ngModel)]="selectedData">
+      <ion-datetime width="70%" displayFormat="DD-MM-YYYY" class="data-picker" pickerFormat="DD MM YYYY" value="{{data}" (ionChange)="updateMyDate()" [(ngModel)]="selectedData">
       </ion-datetime>
+      <button ion-button color="red" class="btnlive" (click)="cleanData()" style="margin-left: 5%;">
+        <ion-icon name="close"></ion-icon>
+      </button>
     </ion-item>
   <div padding class="scrolling-wrapper" scrollX="true">
     <ion-chip *ngFor="let cat of categorias" (click)="setCategoria(cat)" class="card">
@@ -21,7 +24,9 @@
           <div class="seperator"></div>
           <ion-col size="7" class="name"><h2><strong>{{event.artista}}</strong></h2><h4 class="venue">{{event.title}}</h4></ion-col>
           <ion-col *ngIf="event.status === 'offline'" size="2">
-            <button ion-button color="greenish" class="btn" (click)='callYoutube(event.videoId)'>BOOK</button>
+            <button ion-button color="greenish" class="btn" (click)='scheduleNotification(event)'>
+              <ion-icon name="add-circle" class="icon" style="font-size: 20px;"></ion-icon>
+            </button>
             <button  ion-button (click)="sendShare(event)" class="btnSs">
               <ion-icon slot="icon-only" name="share" style="font-size: 20px;"></ion-icon>
             </button>

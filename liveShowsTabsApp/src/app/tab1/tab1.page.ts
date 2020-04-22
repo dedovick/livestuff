@@ -3,7 +3,7 @@ import { YtService } from '../services/yt/yt.service';
 import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
 import { Platform } from '@ionic/angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -29,7 +29,8 @@ export class Tab1Page {
 
 
   constructor(private ytService: YtService, public plt: Platform,
-              private youtube: YoutubeVideoPlayer, private socialSharing: SocialSharing) {
+              private youtube: YoutubeVideoPlayer, private socialSharing: SocialSharing,
+              private localNotifications: LocalNotifications) {
     // this.events = this.ytService.getEvents(new Date('2020-4-19'));
     const res = this.ytService.getEvents(this.data);
     res.subscribe(data => {
@@ -68,5 +69,23 @@ export class Tab1Page {
       console.log('teste NOK');
       this.selectedCat.push(cat);
     }
+  }
+
+  scheduleNotification( event) {
+    // Schedule delayed notification
+    this.localNotifications.schedule({
+      text: 'Evento de notificação agendado',
+      trigger: {at: new Date(new Date().getTime() + 3600)},
+      led: 'FF0000',
+      sound: null
+    });
+  }
+
+  cleanData() {
+    this.selectedData = undefined;
+    const res = this.ytService.getEvents(this.data);
+    res.subscribe(data => {
+      this.events = data;
+    });
   }
 }
