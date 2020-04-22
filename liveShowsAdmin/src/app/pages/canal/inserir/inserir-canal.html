@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Canal</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="canal-logo">
+    <img src="assets/img/appicon.svg" alt="">
+  </div>
+
+  <form #canalForm="ngForm" novalidate>
+    <ion-list lines="none">
+      <ion-item>
+        <ion-label position="stacked" color="primary">Nome do canal</ion-label>
+        <ion-input [(ngModel)]="canal.nome" name="channelName" type="text" #channelName="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="channelName.valid || submitted == false" class="ion-padding-start">
+          Nome obrigatório
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Id Youtube</ion-label>
+        <ion-input [(ngModel)]="canal.idYoutube" name="idYoutube" type="text" #idYoutube="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="idYoutube.valid || submitted == false" class="ion-padding-start">
+          Nome obrigatório
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Id Facebook</ion-label>
+        <ion-input [(ngModel)]="canal.idFacebook" name="idFacebook" type="text" #idFacebook="ngModel">
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="idFacebook.valid || submitted == false" class="ion-padding-start">
+          Nome obrigatório
+        </p>
+      </ion-text>
+    </ion-list>
+
+    <div class="ion-padding">
+      <ion-button (click)="onSalvar(canalForm)" type="submit" expand="block">Salvar</ion-button>
+    </div>
+  </form>
+
+</ion-content>

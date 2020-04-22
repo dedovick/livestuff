@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Canais</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="canal-logo">
+    <img src="assets/img/appicon.svg" alt="">
+  </div>
+
+  <form #canalForm="ngForm" novalidate>
+    <ion-list #scheduleList>
+      <ion-item-group *ngFor="let canal of canais">
+ 
+          <ion-item> <!--routerLink="cadastrar">-->
+            <ion-label>
+              <h3>{{canal.idYoutube}}</h3>
+              <p>
+                {{canal.nome}}
+              </p>
+            </ion-label>
+          </ion-item>
+      </ion-item-group>
+    </ion-list>
+
+    <div class="ion-padding">
+      <ion-button (click)="onCadastrar()" type="submit" expand="block">Cadastrar</ion-button>
+    </div>
+  </form>
+
+</ion-content>
