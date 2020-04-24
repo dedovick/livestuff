@@ -14,11 +14,13 @@ import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
 import { HttpClientModule } from '@angular/common/http';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { IonicSelectableModule } from 'ionic-selectable';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, IonicSelectableModule],
   providers: [
     StatusBar,
     SplashScreen,
@@ -26,7 +28,8 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
     YtService,
     YoutubeVideoPlayer,
     SocialSharing,
-    LocalNotifications
+    LocalNotifications,
+    Dialogs
   ],
   bootstrap: [AppComponent]
 })

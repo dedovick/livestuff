@@ -1,10 +1,14 @@
 <ion-header [translucent]="true">
+  <ion-toolbar color='danger'>
+    <ion-title>
+      LiveStuff
+    </ion-title>
+  </ion-toolbar>
   <ion-toolbar>
     <ion-item>
-      <ion-label>Data:</ion-label>
-      <ion-datetime width="70%" displayFormat="DD-MM-YYYY" class="data-picker" pickerFormat="DD MM YYYY" value="{{data}" (ionChange)="updateMyDate()" [(ngModel)]="selectedData">
+      <ion-datetime placeholder="Data" displayFormat="DD-MM-YYYY" class="data-picker" pickerFormat="DD MM YYYY" value="{{data}" (ionChange)="updateMyDate()" [(ngModel)]="selectedData">
       </ion-datetime>
-      <button ion-button color="red" class="btnlive" (click)="cleanData()" style="margin-left: 5%;">
+      <button ion-button color="red" class="btnClear" (click)="cleanData()" style="margin-left: 5%;">
         <ion-icon name="close"></ion-icon>
       </button>
     </ion-item>
@@ -16,14 +20,14 @@
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
-  <ion-card class="eventcard" *ngFor="let event of events" [hidden]="selectedCat.length > 0 && selectedCat.indexOf(event.type) === -1" margin-bottom>
+  <ion-card class="eventcard" *ngFor="let event of events" [hidden]="(selectedCat.length > 0 && selectedCat.indexOf(event.type) === -1) || event.data < todayString" margin-bottom>
       <ion-img [src]="event.largeimage" class="img-list"></ion-img>
       <ion-card-content>
         <ion-row >
           <ion-col size="2"><h1 class="month">{{event.data.substring(8,10)}}</h1><h2 class="month">{{event.data.substring(5,7)}}</h2><h3 class="month">{{event.data.substring(0, 4)}}</h3></ion-col>
           <div class="seperator"></div>
           <ion-col size="7" class="name"><h2><strong>{{event.artista}}</strong></h2><h4 class="venue">{{event.title}}</h4></ion-col>
-          <ion-col *ngIf="event.status === 'offline'" size="2">
+          <ion-col *ngIf="event.data != todayString" size="2">
             <button ion-button color="greenish" class="btn" (click)='scheduleNotification(event)'>
               <ion-icon name="add-circle" class="icon" style="font-size: 20px;"></ion-icon>
             </button>
@@ -31,8 +35,8 @@
               <ion-icon slot="icon-only" name="share" style="font-size: 20px;"></ion-icon>
             </button>
             </ion-col>
-          <ion-col *ngIf="event.status === 'online'" size="2">
-            <button ion-button color="red" class="btnlive" (click)='callYoutube(event.videoId)'>LIVE</button>            
+          <ion-col *ngIf="event.data === todayString" size="2">
+            <button ion-button color="red" class="btnlive" (click)='callYoutube(event)'>LIVE</button>            
             <button  ion-button (click)="sendShare(event)" class="btnSs">
               <ion-icon slot="icon-only" name="share" style="font-size: 20px;"></ion-icon>
             </button>
@@ -40,8 +44,8 @@
         </ion-row>
         <div class="hor-seperator"></div>
         <ion-row>
+          <ion-col size="6" class="righttext">{{event.time}}HRS</ion-col>
           <ion-col size="6"><ion-badge color="light">{{event.type}}</ion-badge></ion-col>
-          <ion-col size="6" class="righttext">{{event.time}}</ion-col>
         </ion-row>
       </ion-card-content>
     </ion-card>

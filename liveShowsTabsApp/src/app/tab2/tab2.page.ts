@@ -2,6 +2,10 @@ import { YtService } from '../services/yt/yt.service';
 import { Component } from '@angular/core';
 import { AlertController, NavController, ModalController, Platform } from '@ionic/angular';
 import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { IonicSelectableComponent } from 'ionic-selectable';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
 
 @Component({
   selector: 'app-tab2',
@@ -9,53 +13,104 @@ import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
-  categoryArray;
-  videos = [];
+  channelsArray;
+  events;
+  message = 'Assista a live de ';
+  youtubeUrl = 'https://www.youtube.com/watch?v=';
+  today = new Date();
+  todayString = '';
   constructor(public ytProvider: YtService,
               public alertCtrl: AlertController,
-              public modalCtrl: ModalController, public plt: Platform, private youtube: YoutubeVideoPlayer) {
+              public modalCtrl: ModalController, public plt: Platform, private youtube: YoutubeVideoPlayer,
+              private socialSharing: SocialSharing,
+              private localNotifications: LocalNotifications,
+              private dialogs: Dialogs) {
+                const year = this.today.getFullYear();
+                const month = this.today.getMonth() + 1;
+                const date = this.today.getDate();
+                if (month > 9) {
+                  this.todayString = year + '-' + month;
+                } else {
+                  this.todayString = year + '-0' + month;
+                }
+                if (date > 9) {
+                  this.todayString += '-' + date;
+                } else {
+                  this.todayString += '-0' + date;
+                }
                 // calls the function that gets all youtube categories
-                this.getCategory();
+                this.getChannels();
     }
-    // opens selected video for viewing
-  viewVideo(vid) {
+
+  // this function presents videos based on category selected by user
+  filter(event: {
+    component: IonicSelectableComponent,
+    value: any
+  }) {
+    this.events = []; // defines this.videos as an empty array
+    const temp = this.ytProvider.getEventsByChannel(event.value.idYoutube); // defines temp as our http call in yt provider
+    // we subscrive to videos of category value here
+    temp.subscribe(data => {
+      console.log(data);
+      this.events = data;
+    }, async err => {
+      // shows error alert if there is an issue with our subscription
+      const alert = this.alertCtrl.create({
+        header: 'Error',
+        message: JSON.stringify(err),
+        buttons: ['OK']
+      });
+      (await alert).present(); // presents our alert
+    });
+  }
+  // this function retrieves a list of the categories available on YouTube
+  getChannels() {
+    this.channelsArray = []; // defines out variable categoryArray as an empty array.
+    const temp = this.ytProvider.getChannels();
+    temp.subscribe(data => {
+      this.channelsArray = data;
+    });
+  }
+
+  callYoutube(event) {
     // if we are on a device where cordova is available we user the youtube video player
     if (this.plt.is('cordova')) {
-      this.youtube.openVideo(vid.id.videoId); // opens video with videoId
+      if (event.videoId && event.videoId !== '') {
+        this.youtube.openVideo(event.videoId); // opens video with videoId
+      } else {
+        window.open('https://www.youtube.com/channel/' + event.idYoutube, '_system');
+      }
     } else {
-        if (vid.id === undefined || vid.id.videoId === undefined) {
-          window.open('https://www.youtube.com/channel/' + vid);
-        } else {
-          // if we are not on a device where cordova is available we open the video in browser.
-          window.open('https://www.youtube.com/watch?v=' + vid.id.videoId);
-        }
+      if (event.videoId && event.videoId !== '') {
+        window.open('https://www.youtube.com/watch?v=' + event.videoId);
+      } else {
+        window.open('https://www.youtube.com/channel/' + event.idYoutube);
+      }
     }
+}
+
+  sendShare(event) {
+    this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.videoId);
   }
-  // this function presents videos based on category selected by user
-    filter(value) {
-      this.videos = []; // defines this.videos as an empty array
-      const temp = this.ytProvider.getLiveBroadcast(value); // defines temp as our http call in yt provider
-      // we subscrive to videos of category value here
-      temp.subscribe(data => {
-        data['items'].forEach(res => {
-          // if video is not present in videos array, we push it into the array
-          if (this.videos.indexOf(res) === -1) {
-            this.videos.push(res);
-          }
-        });
-      }, async err => {
-        // shows error alert if there is an issue with our subscription
-        const alert = this.alertCtrl.create({
-          header: 'Error',
-          message: JSON.stringify(err),
-          buttons: ['OK']
-        });
-        (await alert).present(); // presents our alert
-      });
-    }
-    // this function retrieves a list of the categories available on YouTube
-    getCategory() {
-      this.categoryArray = []; // defines out variable categoryArray as an empty array.
-      this.categoryArray = this.ytProvider.getCategories();
+
+
+  scheduleNotification( event) {
+    const data = new Date(Number(event.data.substring(0, 4)), Number(event.data.substring(5, 7)),
+      Number(event.data.substring(8, 10)), 12, 0, 0, 0);
+
+    console.log('AAAAAAAAAAAAAAAAA: ' + data.getDate() + '-' + data.getMonth() + '-' + data.getFullYear() + ':' + data.getHours());
+
+    // Schedule delayed notification
+    this.localNotifications.schedule({
+      text: 'Evento de notificação agendado',
+      trigger: {at: new Date(data.getTime())},
+      led: 'FF0000',
+      sound: null
+    });
+
+    this.dialogs.alert('Evento agendado para o dia ' + data.getDate() + '-' + data.getMonth(), 'Agenda')
+      .then(() => console.log('Dialog dismissed'))
+      .catch(e => console.log('Error displaying dialog', e));
+
   }
 }

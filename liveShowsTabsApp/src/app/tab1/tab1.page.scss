@@ -55,7 +55,7 @@ ion-card{
   background-color: rgb(212, 194, 194);
   align-self: center;
   margin-left: 0px
-} 
+}
 
 .hor-seperator{
   width: 100%;
@@ -147,8 +147,10 @@ ion-chip {
   color: white;
 }
 
-.btnlive{
+.btnClear{
   border-radius: 5px;
+  position: absolute;
+  right: 5%;
   height: 80%!important;
   width: 32px;
   color: white;

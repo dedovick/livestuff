@@ -16,12 +16,12 @@ export class Tab3Page implements OnInit {
     constructor(private ytService: YtService, private router: Router) {
 
       this.gridImages = [
-        { image: 'assets/categories/coffee-cup.jpg', id: '25'},
-        { image: 'assets/categories/ball-fun.jpg', id: '17'},
-        { image: 'assets/categories/people-at-concert.jpg', id: '10'},
-        { image: 'assets/categories/silver-macbook.jpg', id: '20'},
-        { image: 'assets/categories/people-at-theater.jpg', id: '23'},
-        { image: 'assets/categories/anise-aroma.jpg', id: '24'}
+        { image: '', id: '25'},
+        { image: '', id: '17'},
+        { image: '', id: '10'},
+        { image: '', id: '20'},
+        { image: '', id: '23'},
+        { image: '', id: '24'}
       ];
      }
 

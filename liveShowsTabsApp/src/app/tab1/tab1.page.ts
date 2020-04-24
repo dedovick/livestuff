@@ -4,6 +4,7 @@ import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
 import { Platform } from '@ionic/angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -24,26 +25,51 @@ export class Tab1Page {
     'clássica',
     'eletrônica',
     'pop',
-    'rap'
+    'rap',
+    'pagode',
+    'funk',
+    'samba',
+    'reagge'
   ];
-
-
+  today = new Date();
+  todayString = '';
   constructor(private ytService: YtService, public plt: Platform,
               private youtube: YoutubeVideoPlayer, private socialSharing: SocialSharing,
-              private localNotifications: LocalNotifications) {
+              private localNotifications: LocalNotifications, private dialogs: Dialogs) {
     // this.events = this.ytService.getEvents(new Date('2020-4-19'));
+    const year = this.today.getFullYear();
+    const month = this.today.getMonth() + 1;
+    const date = this.today.getDate();
+    if (month > 9) {
+      this.todayString = year + '-' + month;
+    } else {
+      this.todayString = year + '-0' + month;
+    }
+    if (date > 9) {
+      this.todayString += '-' + date;
+    } else {
+      this.todayString += '-0' + date;
+    }
     const res = this.ytService.getEvents(this.data);
     res.subscribe(data => {
       this.events = data;
     });
   }
 
-  callYoutube(videoId) {
+  callYoutube(event) {
       // if we are on a device where cordova is available we user the youtube video player
       if (this.plt.is('cordova')) {
-        this.youtube.openVideo(videoId); // opens video with videoId
+        if (event.videoId && event.videoId !== '') {
+          this.youtube.openVideo(event.videoId); // opens video with videoId
+        } else {
+          window.open('https://www.youtube.com/channel/' + event.idYoutube, '_system');
+        }
       } else {
-        window.open('https://www.youtube.com/watch?v=' + videoId);
+        if (event.videoId && event.videoId !== '') {
+          window.open('https://www.youtube.com/watch?v=' + event.videoId);
+        } else {
+          window.open('https://www.youtube.com/channel/' + event.idYoutube);
+        }
       }
   }
 
@@ -72,13 +98,23 @@ export class Tab1Page {
   }
 
   scheduleNotification( event) {
+    const data = new Date(Number(event.data.substring(0, 4)), Number(event.data.substring(5, 7)),
+      Number(event.data.substring(8, 10)), 12, 0, 0, 0);
+
+    console.log('AAAAAAAAAAAAAAAAA: ' + data.getDate() + '-' + data.getMonth() + '-' + data.getFullYear() + ':' + data.getHours());
+
     // Schedule delayed notification
     this.localNotifications.schedule({
       text: 'Evento de notificação agendado',
-      trigger: {at: new Date(new Date().getTime() + 3600)},
+      trigger: {at: new Date(data.getTime())},
       led: 'FF0000',
       sound: null
     });
+
+    this.dialogs.alert('Evento agendado para o dia ' + data.getDate() + '-' + data.getMonth(), 'Agenda')
+      .then(() => console.log('Dialog dismissed'))
+      .catch(e => console.log('Error displaying dialog', e));
+
   }
 
   cleanData() {
