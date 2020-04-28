@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Evento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="evento-logo">
+    <img src="assets/img/appicon.svg" alt="">
+  </div>
+
+  <form #eventoForm="ngForm" novalidate>
+    <ion-list lines="none">
+      <ion-item>
+        <ion-label position="stacked" color="primary">Canal</ion-label>
+        <ionic-selectable
+          [(ngModel)]="evento.canal"
+          [items]="canais"
+          itemValueField="idYoutube"
+          itemTextField="nome"
+          name="canal"
+          [canSearch]="true"
+          (onChange)="canalChange($event)">
+        </ionic-selectable>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="canal !== '' || submitted == false" class="ion-padding-start">
+          Canal obrigatório
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Título do evento</ion-label>
+        <ion-input [(ngModel)]="evento.title" name="titulo" type="text" #titulo="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="titulo.valid || submitted == false" class="ion-padding-start">
+          Título obrigatório
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Data</ion-label>
+        <ion-datetime [(ngModel)]="evento.data" name="dataEvento" displayFormat="DD/MM/YYYY" min="2020-01-01" max="2050-12-31" #dataEvento="ngModel">
+        </ion-datetime>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="dataEvento.valid || submitted == false" class="ion-padding-start">
+          Data obrigatória
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Hora</ion-label>
+        <ion-datetime [(ngModel)]="evento.time" name="horaEvento" displayFormat="HH:mm" #horaEvento="ngModel">
+        </ion-datetime>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="horaEvento.valid || submitted == false" class="ion-padding-start">
+          Hora obrigatória
+        </p>
+      </ion-text>
+    </ion-list>
+
+    <div class="ion-padding">
+      <ion-button (click)="onSalvar(eventoForm)" type="submit" expand="block">Salvar</ion-button>
+    </div>
+  </form>
+
+</ion-content>
