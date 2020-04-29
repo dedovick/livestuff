@@ -72,31 +72,33 @@ export class Tab2Page {
       this.channelsArray = data;
     });
   }
-
   callYoutube(event) {
     // if we are on a device where cordova is available we user the youtube video player
     if (this.plt.is('cordova')) {
-      if (event.videoId && event.videoId !== '') {
+      window.open(event.url, '_system');
+      /*if (event.videoId && event.videoId !== '') {
         window.open(this.videoUrl + event.videoId, '_system');
         // this.youtube.openVideo(event.videoId); // opens video with videoId
       } else {
         window.open(this.youtubeUrl + event.idYoutube, '_system');
-      }
+      }*/
     } else {
-      if (event.videoId && event.videoId !== '') {
+      window.open(event.url, '_system');
+      /*if (event.videoId && event.videoId !== '') {
         window.open(this.videoUrl + event.videoId);
       } else {
         window.open(this.youtubeUrl + event.idYoutube);
-      }
+      }*/
     }
-}
+  }
 
   sendShare(event) {
-    if (event.videoId && event.videoId !== '') {
-      this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.idYoutube);
-    } else {
+    this.socialSharing.share(this.message + event.artista, event.title, null, event.url);
+    /*if (event.videoId && event.videoId !== '') {
       this.socialSharing.share(this.message + event.artista, event.title, null, this.videoUrl + event.videoId);
-    }
+    } else {
+      this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.idYoutube);
+    }*/
   }
 
 
@@ -114,7 +116,7 @@ export class Tab2Page {
       sound: null
     });
 
-    this.dialogs.alert('Evento agendado para o dia ' + data.getDate() + '-' + data.getMonth(), 'Agenda')
+    this.dialogs.alert('Evento agendado para o dia ' + data.getDate() + '-' + data.getMonth() + 1, 'Agenda')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
 
