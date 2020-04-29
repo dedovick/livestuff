@@ -116,7 +116,7 @@ export class Tab2Page {
       sound: null
     });
 
-    this.dialogs.alert('Evento agendado para o dia ' + data.getDate() + '-' + data.getMonth() + 1, 'Agenda')
+    this.dialogs.alert('Evento agendado para o dia ' + data.getDate() + '-' + (data.getMonth() + 1), 'Agenda')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
 

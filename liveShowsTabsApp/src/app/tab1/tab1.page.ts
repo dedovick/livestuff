@@ -119,7 +119,7 @@ export class Tab1Page {
       sound: null
     });
 
-    this.dialogs.alert('Evento agendado! Você receberá uma notificação no dia ' + data.getDate() + '-' + data.getMonth() + 1 +
+    this.dialogs.alert('Evento agendado! Você receberá uma notificação no dia ' + data.getDate() + '-' + (data.getMonth() + 1) +
      '!', 'Agenda')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
