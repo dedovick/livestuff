@@ -14,7 +14,8 @@ export class Tab1Page {
 
   data = undefined;
   message = 'Assista a live de ';
-  youtubeUrl = 'https://www.youtube.com/watch?v=';
+  youtubeUrl = 'https://www.youtube.com/channel/';
+  videoUrl = 'https://www.youtube.com/watch?v=';
   selectedData = undefined;
   events;
   selectedCat = [];
@@ -57,20 +58,23 @@ export class Tab1Page {
   }
 
   callYoutube(event) {
-      // if we are on a device where cordova is available we user the youtube video player
-      if (this.plt.is('cordova')) {
-        if (event.videoId && event.videoId !== '') {
-          this.youtube.openVideo(event.videoId); // opens video with videoId
-        } else {
-          window.open('https://www.youtube.com/channel/' + event.idYoutube, '_system');
-        }
+    // if we are on a device where cordova is available we user the youtube video player
+    if (this.plt.is('cordova')) {
+      window.open(event.url, '_system');
+      /*if (event.videoId && event.videoId !== '') {
+        window.open(this.videoUrl + event.videoId, '_system');
+        // this.youtube.openVideo(event.videoId); // opens video with videoId
       } else {
-        if (event.videoId && event.videoId !== '') {
-          window.open('https://www.youtube.com/watch?v=' + event.videoId);
-        } else {
-          window.open('https://www.youtube.com/channel/' + event.idYoutube);
-        }
-      }
+        window.open(this.youtubeUrl + event.idYoutube, '_system');
+      }*/
+    } else {
+      window.open(event.url, '_system');
+      /*if (event.videoId && event.videoId !== '') {
+        window.open(this.videoUrl + event.videoId);
+      } else {
+        window.open(this.youtubeUrl + event.idYoutube);
+      }*/
+    }
   }
 
   updateMyDate() {
@@ -82,7 +86,12 @@ export class Tab1Page {
   }
 
   sendShare(event) {
-    this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.videoId);
+    this.socialSharing.share(this.message + event.artista, event.title, null, event.url);
+    /*if (event.videoId && event.videoId !== '') {
+      this.socialSharing.share(this.message + event.artista, event.title, null, this.videoUrl + event.videoId);
+    } else {
+      this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.idYoutube);
+    }*/
   }
 
   setCategoria(cat) {
@@ -98,20 +107,20 @@ export class Tab1Page {
   }
 
   scheduleNotification( event) {
-    const data = new Date(Number(event.data.substring(0, 4)), Number(event.data.substring(5, 7)),
-      Number(event.data.substring(8, 10)), 12, 0, 0, 0);
-
-    console.log('AAAAAAAAAAAAAAAAA: ' + data.getDate() + '-' + data.getMonth() + '-' + data.getFullYear() + ':' + data.getHours());
+    const data = new Date(Number(event.data.substring(0, 4)), Number(event.data.substring(5, 7)) - 1,
+      Number(event.data.substring(8, 10)), 9, 0, 0, 0);
 
     // Schedule delayed notification
     this.localNotifications.schedule({
-      text: 'Evento de notificação agendado',
+      text: 'É hoje! Show do ' + event.artista + ' às ' + event.time,
       trigger: {at: new Date(data.getTime())},
+      // trigger: {at: new Date(new Date().getTime() + 3600)},
       led: 'FF0000',
       sound: null
     });
 
-    this.dialogs.alert('Evento agendado para o dia ' + data.getDate() + '-' + data.getMonth(), 'Agenda')
+    this.dialogs.alert('Evento agendado! Você receberá uma notificação no dia ' + data.getDate() + '-' + data.getMonth() + 1 +
+     '!', 'Agenda')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
 

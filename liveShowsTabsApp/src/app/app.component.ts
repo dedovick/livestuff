@@ -22,6 +22,9 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.platform.backButton.subscribeWithPriority(0, () => {
+        navigator['app'].exitApp();
+     });
     });
   }
 }
