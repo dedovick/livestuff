@@ -16,7 +16,8 @@ export class Tab2Page {
   channelsArray;
   events;
   message = 'Assista a live de ';
-  youtubeUrl = 'https://www.youtube.com/watch?v=';
+  youtubeUrl = 'https://www.youtube.com/channel/';
+  videoUrl = 'https://www.youtube.com/watch?v=';
   today = new Date();
   todayString = '';
   constructor(public ytProvider: YtService,
@@ -76,21 +77,26 @@ export class Tab2Page {
     // if we are on a device where cordova is available we user the youtube video player
     if (this.plt.is('cordova')) {
       if (event.videoId && event.videoId !== '') {
-        this.youtube.openVideo(event.videoId); // opens video with videoId
+        window.open(this.videoUrl + event.videoId, '_system');
+        // this.youtube.openVideo(event.videoId); // opens video with videoId
       } else {
-        window.open('https://www.youtube.com/channel/' + event.idYoutube, '_system');
+        window.open(this.youtubeUrl + event.idYoutube, '_system');
       }
     } else {
       if (event.videoId && event.videoId !== '') {
-        window.open('https://www.youtube.com/watch?v=' + event.videoId);
+        window.open(this.videoUrl + event.videoId);
       } else {
-        window.open('https://www.youtube.com/channel/' + event.idYoutube);
+        window.open(this.youtubeUrl + event.idYoutube);
       }
     }
 }
 
   sendShare(event) {
-    this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.videoId);
+    if (event.videoId && event.videoId !== '') {
+      this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.idYoutube);
+    } else {
+      this.socialSharing.share(this.message + event.artista, event.title, null, this.videoUrl + event.videoId);
+    }
   }
 
 
