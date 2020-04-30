@@ -6,6 +6,7 @@ const FileAsync = require('lowdb/adapters/FileAsync')
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const server_url = 'https://live-stuff-server.herokuapp.com/'
 
 // Create server
 const app = express()
@@ -57,13 +58,11 @@ low(adapter)
     app.get('/channels', (req, res) => {
       //const post = db.get('posts').find({id : req.params.id}).value();
       const post = db.get('channel').sortBy('nome').value();
-      console.log(post);
       res.send(post)
     })
 	
 	// POST /events
     app.post('/channels', (req, res) => {
-      console.log(req.body);
       db.get('channel')
 		.push(req.body)
 		.last()
@@ -74,13 +73,16 @@ low(adapter)
 	
 	// POST /events
     app.post('/events', (req, res) => {
-      console.log(req.body);
       db.get('event')
 		.push(req.body)
 		.last()
 		.assign({ id: Date.now().toString() })
         .write()
         .then(post => res.send(post));
+    })
+
+    app.get('/server', (req, res) => {
+	res.send({'serverUrl': server_url});
     })
 
     // Set db default values

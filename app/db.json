@@ -923,6 +923,19 @@
       "status": "offline",
       "videoId": "",
       "url": "https://www.youtube.com/channel/UCwfEOn0O1DWcyTgzVVu28ig"
+    },
+    {
+      "artista": "Bruno e Marrone",
+      "idYoutube": "UCdTX5ycRKPvTUiGu1519u4g",
+      "data": "2020-05-16",
+      "type": "sertanejo",
+      "time": "21:00",
+      "largeimage": "https://yt3.ggpht.com/a/AATXAJz7A0YOXwDv6HvQaenI1osxPmTRzR-AA_hD3Q=s288-c-k-c0xffffffff-no-rj-mo",
+      "title": "#B&M2",
+      "status": "offline",
+      "videoId": "",
+      "url": "https://www.youtube.com/user/BrunoEMarrone",
+      "id": "1588277380612"
     }
   ],
   "channel": [
