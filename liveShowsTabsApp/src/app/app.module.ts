@@ -16,6 +16,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { IonicSelectableModule } from 'ionic-selectable';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,7 +30,8 @@ import { Dialogs } from '@ionic-native/dialogs/ngx';
     YoutubeVideoPlayer,
     SocialSharing,
     LocalNotifications,
-    Dialogs
+    Dialogs,
+    NativeStorage
   ],
   bootstrap: [AppComponent]
 })

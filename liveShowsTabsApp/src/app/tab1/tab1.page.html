@@ -28,8 +28,11 @@
           <div class="seperator"></div>
           <ion-col size="7" class="name"><h2><strong>{{event.artista}}</strong></h2><h4 class="venue">{{event.title}}</h4></ion-col>
           <ion-col *ngIf="event.data != todayString" size="2">
-            <button ion-button color="greenish" class="btn" (click)='scheduleNotification(event)'>
+            <button *ngIf="dataStorage.schedule.indexOf(event.url) < 0" ion-button color="greenish" class="btn" (click)='scheduleNotification(event)'>
               <ion-icon name="add-circle" class="icon" style="font-size: 20px;"></ion-icon>
+            </button>
+            <button *ngIf="dataStorage.schedule.indexOf(event.url) >= 0" ion-button color="greenish" class="btn">
+              <ion-icon name="checkmark-circle-outline" class="icon" style="font-size: 20px;"></ion-icon>
             </button>
             <button  ion-button (click)="sendShare(event)" class="btnSs">
               <ion-icon slot="icon-only" name="share" style="font-size: 20px;"></ion-icon>
@@ -44,8 +47,8 @@
         </ion-row>
         <div class="hor-seperator"></div>
         <ion-row>
-          <ion-col size="6" class="righttext">{{event.time}}HRS</ion-col>
-          <ion-col size="6"><ion-badge color="light">{{event.type}}</ion-badge></ion-col>
+          <ion-col size="6">{{event.time}}h</ion-col>
+          <ion-col size="6" class="righttext"><ion-badge color="light">{{event.type}}</ion-badge></ion-col>
         </ion-row>
       </ion-card-content>
     </ion-card>

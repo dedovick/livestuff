@@ -5,6 +5,7 @@ import { Platform } from '@ionic/angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -34,13 +35,23 @@ export class Tab1Page {
   ];
   today = new Date();
   todayString = '';
+  dataStorage = {
+    schedule: []
+  };
   constructor(private ytService: YtService, public plt: Platform,
               private youtube: YoutubeVideoPlayer, private socialSharing: SocialSharing,
-              private localNotifications: LocalNotifications, private dialogs: Dialogs) {
+              private localNotifications: LocalNotifications, private dialogs: Dialogs,
+              private nativeStorage: NativeStorage) {
+
     // this.events = this.ytService.getEvents(new Date('2020-4-19'));
     const year = this.today.getFullYear();
     const month = this.today.getMonth() + 1;
     const date = this.today.getDate();
+    this.nativeStorage.getItem('dataStorage')
+    .then(
+      data => this.dataStorage = data,
+      error => console.error(error)
+    );
     if (month > 9) {
       this.todayString = year + '-' + month;
     } else {
@@ -107,6 +118,7 @@ export class Tab1Page {
   }
 
   scheduleNotification( event) {
+
     const data = new Date(Number(event.data.substring(0, 4)), Number(event.data.substring(5, 7)) - 1,
       Number(event.data.substring(8, 10)), 9, 0, 0, 0);
 
@@ -118,6 +130,15 @@ export class Tab1Page {
       led: 'FF0000',
       sound: null
     });
+
+    this.dataStorage.schedule.push(event.url);
+
+
+    this.nativeStorage.setItem('dataStorage', this.dataStorage)
+    .then(
+      () => console.log('Item saved'),
+      error => console.error('Error storing item', error)
+    );
 
     this.dialogs.alert('Evento agendado! Você receberá uma notificação no dia ' + data.getDate() + '-' + (data.getMonth() + 1) +
      '!', 'Agenda')
