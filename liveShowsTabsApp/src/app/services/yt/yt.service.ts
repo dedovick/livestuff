@@ -29,7 +29,6 @@ export class YtService {
   }
 
   getEvents(data) {
-    console.log('AAAAAAAAAAAAAAAAAAA: ' + this.serverUrl);
     if (data === undefined) {
       return this.http.get(this.serverUrl + 'events');
     } else {
