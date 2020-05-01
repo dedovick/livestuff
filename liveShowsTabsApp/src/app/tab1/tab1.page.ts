@@ -6,6 +6,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
+import { APP_BASE_HREF } from '@angular/common';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -15,6 +16,8 @@ export class Tab1Page {
 
   data = undefined;
   message = 'Live compartilhada pelo APP Livestuff. Assista a live de ';
+  messageApp = 'Baixe o APP Livestuff em ';
+  appUrl = 'https://play.google.com/store/apps/details?id=live.stuff.ionic';
   youtubeUrl = 'https://www.youtube.com/channel/';
   videoUrl = 'https://www.youtube.com/watch?v=';
   selectedData = undefined;
@@ -103,6 +106,10 @@ export class Tab1Page {
     } else {
       this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.idYoutube);
     }*/
+  }
+
+  shareApp() {
+    this.socialSharing.share(this.messageApp, 'Livestuff APP' , null, this.appUrl);
   }
 
   setCategoria(cat) {

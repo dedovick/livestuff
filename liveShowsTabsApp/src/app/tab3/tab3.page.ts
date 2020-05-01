@@ -2,6 +2,7 @@ import { YtService } from './../services/yt/yt.service';
 import { Component, OnInit } from '@angular/core';
 import {Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @Component({
   selector: 'app-tab3',
@@ -15,9 +16,11 @@ export class Tab3Page implements OnInit {
   videos: any;
   alertCtrl: any;
   public suggest: FormGroup;
+  messageApp = 'Baixe o APP Livestuff em ';
+  appUrl = 'https://play.google.com/store/apps/details?id=live.stuff.ionic';
 
   constructor(private ytService: YtService, private formBuilder: FormBuilder,
-              private dialogs: Dialogs) {
+              private socialSharing: SocialSharing, private dialogs: Dialogs) {
     this.suggest = this.formBuilder.group({
       text: ['', Validators.required],
       email: ['', Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')]
@@ -39,4 +42,9 @@ export class Tab3Page implements OnInit {
 
     this.suggest.reset();
   }
+
+  shareApp() {
+    this.socialSharing.share(this.messageApp, 'Livestuff APP' , null, this.appUrl);
   }
+
+}

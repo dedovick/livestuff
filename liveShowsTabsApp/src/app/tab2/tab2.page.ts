@@ -17,6 +17,8 @@ export class Tab2Page {
   channelsArray;
   events;
   message = 'Live compartilhada pelo APP Livestuff. Assista a live de ';
+  messageApp = 'Baixe o APP Livestuff em ';
+  appUrl = 'https://play.google.com/store/apps/details?id=live.stuff.ionic';
   youtubeUrl = 'https://www.youtube.com/channel/';
   videoUrl = 'https://www.youtube.com/watch?v=';
   today = new Date();
@@ -108,7 +110,10 @@ export class Tab2Page {
       this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.idYoutube);
     }*/
   }
-
+  
+  shareApp() {
+    this.socialSharing.share(this.messageApp, 'Livestuff APP' , null, this.appUrl);
+  }
 
   scheduleNotification( event) {
 
