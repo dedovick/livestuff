@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { YtService } from '../services/yt/yt.service';
 import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
-import { Platform } from '@ionic/angular';
+import { Platform, LoadingController } from '@ionic/angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { APP_BASE_HREF } from '@angular/common';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -41,12 +40,13 @@ export class Tab1Page {
   dataStorage = {
     schedule: []
   };
+  isLoading = false;
   constructor(private ytService: YtService, public plt: Platform,
               private youtube: YoutubeVideoPlayer, private socialSharing: SocialSharing,
               private localNotifications: LocalNotifications, private dialogs: Dialogs,
-              private nativeStorage: NativeStorage) {
+              private nativeStorage: NativeStorage, public loadingController: LoadingController) {
 
-    // this.events = this.ytService.getEvents(new Date('2020-4-19'));
+    this.present();
     const year = this.today.getFullYear();
     const month = this.today.getMonth() + 1;
     const date = this.today.getDate();
@@ -68,6 +68,7 @@ export class Tab1Page {
     const res = this.ytService.getEvents(this.data);
     res.subscribe(data => {
       this.events = data;
+      this.dismiss();
     });
   }
 
@@ -160,5 +161,24 @@ export class Tab1Page {
     res.subscribe(data => {
       this.events = data;
     });
+  }
+
+  async present() {
+    this.isLoading = true;
+    return await this.loadingController.create({
+      // duration: 5000,
+    }).then(a => {
+      a.present().then(() => {
+        console.log('presented');
+        if (!this.isLoading) {
+          a.dismiss().then(() => console.log('abort presenting'));
+        }
+      });
+    });
+  }
+
+  async dismiss() {
+    this.isLoading = false;
+    return await this.loadingController.dismiss().then(() => console.log('dismissed'));
   }
 }

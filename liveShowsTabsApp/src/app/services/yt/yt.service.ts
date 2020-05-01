@@ -6,53 +6,29 @@ import { Injectable } from '@angular/core';
 })
 export class YtService {
 
-  apiKey = 'AIzaSyDtbEKEUxgJb1TeugAVKTFIuTJmYocnvbE';
 
-  constructor(private http: HttpClient) { }
+  serverUrl = 'https://live-stuff-server.herokuapp.com/';
 
-  // this function gets videos from the specified category from the youtube rest api
-  getLiveVideos(category) {
-    return this.http.get('https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=' +
-        category + '&key=' + this.apiKey + '&eventType=live');
-  }
-
-  // Get live vídeos from a channel
-  getNextLiveVideos(category) {
-    return this.http.get('https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=' +
-        category + '&key=' + this.apiKey + '&eventType=upcoming');
-  }
-
-    // this function gets videos from the specified category from the youtube rest api
-  getLiveVideosChannel() {
-    return this.http.get('https://www.googleapis.com/youtube/v3/liveBroadcasts?part=snippet&key=' +
-    this.apiKey + '&broadcastStatus=active&broadcastType=all');
-  }
-
-  getLiveBroadcast(event) {
-    return this.http.get('https://www.googleapis.com/youtube/v3/search?part=snippet&key=' +
-    this.apiKey + '&channelId=' + event.idYoutube + '&type=video&eventType=upcoming');
-  }
-
-  getChannel(event) {
-    return this.http.get('https://www.googleapis.com/youtube/v3/search?part=snippet&key=' +
-    this.apiKey + '&q=' + event.idYoutube + '');
+  constructor(private http: HttpClient) {
+    this.getServerUrl();
   }
 
   // this function gets the channels from server.
   getChannels() {
-    return this.http.get('https://live-stuff-server.herokuapp.com/channels');
+    return this.http.get(this.serverUrl + 'channels');
   }
 
   // this function gets the events by channel id
   getEventsByChannel(idYoutube) {
-    return this.http.get('https://live-stuff-server.herokuapp.com/channels/events/' + idYoutube);
+    return this.http.get(this.serverUrl + 'channels/events/' + idYoutube);
   }
 
   getEvents(data) {
+    console.log('AAAAAAAAAAAAAAAAAAA: ' + this.serverUrl);
     if (data === undefined) {
-      return this.http.get('https://live-stuff-server.herokuapp.com/events');
+      return this.http.get(this.serverUrl + 'events');
     } else {
-      return this.http.get('https://live-stuff-server.herokuapp.com/events/' + data);
+      return this.http.get(this.serverUrl + 'events/' + data);
     }
   }
 
@@ -61,6 +37,13 @@ export class YtService {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
 
-    return this.http.post<any>('https://live-stuff-server.herokuapp.com/suggest', JSON.stringify(data), httpHeader);
+    return this.http.post<any>(this.serverUrl + 'suggest', JSON.stringify(data), httpHeader);
+  }
+
+  getServerUrl() {
+    const res = this.http.get('https://live-stuff-server.herokuapp.com/server');
+    res.subscribe(data => {
+      this.serverUrl = data[0].serverUrl;
+    });
   }
 }
