@@ -10,12 +10,17 @@ export class YtService {
   serverUrl = 'https://live-stuff-server.herokuapp.com/';
 
   constructor(private http: HttpClient) {
-    this.getServerUrl();
+    //this.getServerUrl();
   }
 
   // this function gets the channels from server.
   getChannels() {
     return this.http.get(this.serverUrl + 'channels');
+  }
+
+  // this function gets the channels from server.
+  getCategories() {
+    return this.http.get(this.serverUrl + 'categories');
   }
 
   // this function gets the events by channel id
@@ -41,9 +46,10 @@ export class YtService {
   }
 
   getServerUrl() {
-    const res = this.http.get('https://live-stuff-server.herokuapp.com/server');
-    res.subscribe(data => {
-      this.serverUrl = data[0].serverUrl;
-    });
+    return this.http.get('https://live-stuff-server.herokuapp.com/server');
+  }
+
+  setServerUrl(serverUrl : string) {
+    this.serverUrl = serverUrl;
   }
 }

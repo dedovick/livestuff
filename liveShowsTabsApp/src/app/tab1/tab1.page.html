@@ -28,7 +28,7 @@
     </ion-item>
   <div padding class="scrolling-wrapper" scrollX="true">
     <ion-chip *ngFor="let cat of categorias" (click)="setCategoria(cat)" class="card">
-      <ion-label color="dark" [ngClass]="{'selectedCat' : selectedCat.indexOf(cat) > -1}">{{cat}}</ion-label>
+      <ion-label color="dark" [ngClass]="{'selectedCat' : selectedCat.indexOf(cat.nome) > -1}">{{cat.nome}}</ion-label>
     </ion-chip>
   </div>
   </ion-toolbar>

@@ -22,19 +22,7 @@ export class Tab1Page {
   selectedData = undefined;
   events;
   selectedCat = [];
-  categorias = [
-    'sertanejo',
-    'rock',
-    'hip hop',
-    'clássica',
-    'eletrônica',
-    'pop',
-    'rap',
-    'pagode',
-    'funk',
-    'samba',
-    'reagge'
-  ];
+  categorias;
   today = new Date();
   todayString = '';
   dataStorage = {
@@ -69,6 +57,10 @@ export class Tab1Page {
     res.subscribe(data => {
       this.events = data;
       this.dismiss();
+    });
+    const resCat = this.ytService.getCategories();
+    resCat.subscribe(data => {
+      this.categorias = data;
     });
   }
 
@@ -114,14 +106,11 @@ export class Tab1Page {
   }
 
   setCategoria(cat) {
-    console.log('teste');
-    if (this.selectedCat.indexOf(cat) > -1) {
-      console.log('teste OK');
-      const index = this.selectedCat.indexOf(cat);
+    if (this.selectedCat.indexOf(cat.nome) > -1) {
+      const index = this.selectedCat.indexOf(cat.nome);
       this.selectedCat.splice(index, 1);
     } else {
-      console.log('teste NOK');
-      this.selectedCat.push(cat);
+      this.selectedCat.push(cat.nome);
     }
   }
 
