@@ -6,6 +6,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { IonicSelectableComponent } from 'ionic-selectable';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
 
 @Component({
   selector: 'app-tab2',
@@ -20,12 +21,19 @@ export class Tab2Page {
   videoUrl = 'https://www.youtube.com/watch?v=';
   today = new Date();
   todayString = '';
+  dataStorage = {
+    schedule: []
+  };
   constructor(public ytProvider: YtService,
               public alertCtrl: AlertController,
               public modalCtrl: ModalController, public plt: Platform, private youtube: YoutubeVideoPlayer,
-              private socialSharing: SocialSharing,
-              private localNotifications: LocalNotifications,
-              private dialogs: Dialogs) {
+              private socialSharing: SocialSharing, private localNotifications: LocalNotifications, private dialogs: Dialogs,
+              private nativeStorage: NativeStorage) {
+                this.nativeStorage.getItem('dataStorage')
+                .then(
+                  data => this.dataStorage = data,
+                  error => console.error(error)
+                );
                 const year = this.today.getFullYear();
                 const month = this.today.getMonth() + 1;
                 const date = this.today.getDate();
@@ -103,20 +111,30 @@ export class Tab2Page {
 
 
   scheduleNotification( event) {
-    const data = new Date(Number(event.data.substring(0, 4)), Number(event.data.substring(5, 7)),
-      Number(event.data.substring(8, 10)), 12, 0, 0, 0);
 
-    console.log('AAAAAAAAAAAAAAAAA: ' + data.getDate() + '-' + data.getMonth() + '-' + data.getFullYear() + ':' + data.getHours());
+    const data = new Date(Number(event.data.substring(0, 4)), Number(event.data.substring(5, 7)) - 1,
+      Number(event.data.substring(8, 10)), 9, 0, 0, 0);
 
     // Schedule delayed notification
     this.localNotifications.schedule({
-      text: 'Evento de notificação agendado',
+      text: 'É hoje! Show do ' + event.artista + ' às ' + event.time,
       trigger: {at: new Date(data.getTime())},
+      // trigger: {at: new Date(new Date().getTime() + 3600)},
       led: 'FF0000',
       sound: null
     });
 
-    this.dialogs.alert('Evento agendado para o dia ' + data.getDate() + '-' + (data.getMonth() + 1), 'Agenda')
+    this.dataStorage.schedule.push(event.url);
+
+
+    this.nativeStorage.setItem('dataStorage', this.dataStorage)
+    .then(
+      () => console.log('Item saved'),
+      error => console.error('Error storing item', error)
+    );
+
+    this.dialogs.alert('Evento agendado! Você receberá uma notificação no dia ' + data.getDate() + '-' + (data.getMonth() + 1) +
+     '!', 'Agenda')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
 

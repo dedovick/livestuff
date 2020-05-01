@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color='danger'>
     <ion-title>
-      LiveStuff
+      <h1>Livestuff</h1>
     </ion-title>
   </ion-toolbar>
   <!--Code for our second navbar starts here. Navbars are fixed. so if you want this to scroll with the page place in ion-content-->
@@ -29,13 +29,16 @@
         <div class="seperator"></div>
         <ion-col size="7" class="name"><h2><strong>{{event.artista}}</strong></h2><h4 class="venue">{{event.title}}</h4></ion-col>
         <ion-col *ngIf="event.data != todayString" size="2">
-          <button ion-button color="greenish" class="btn" (click)='scheduleNotification(event)'>
-            <ion-icon name="add-circle" class="icon" style="font-size: 20px;"></ion-icon>
-          </button>
+            <button *ngIf="dataStorage.schedule.indexOf(event.url) < 0" ion-button color="greenish" class="btn" (click)='scheduleNotification(event)'>
+              <ion-icon name="add-circle" class="icon" style="font-size: 20px;"></ion-icon>
+            </button>
+            <button *ngIf="dataStorage.schedule.indexOf(event.url) >= 0" ion-button color="greenish" class="btn">
+              <ion-icon name="checkmark-circle-outline" class="icon" style="font-size: 20px;"></ion-icon>
+            </button>
           <button  ion-button (click)="sendShare(event)" class="btnSs">
             <ion-icon slot="icon-only" name="share" style="font-size: 20px;"></ion-icon>
           </button>
-          </ion-col>
+        </ion-col>
         <ion-col *ngIf="event.data === todayString" size="2">
           <button ion-button color="red" class="btnlive" (click)='callYoutube(event)'>LIVE</button>            
           <button  ion-button (click)="sendShare(event)" class="btnSs">

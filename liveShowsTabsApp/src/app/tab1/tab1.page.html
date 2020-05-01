@@ -1,10 +1,13 @@
+
 <ion-header [translucent]="true">
   <ion-toolbar color='danger'>
     <ion-title>
-      LiveStuff
+      <h1>Livestuff</h1>
     </ion-title>
   </ion-toolbar>
-  <ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <ion-toolbar style="position: fixed">
     <ion-item>
       <ion-datetime placeholder="Data" displayFormat="DD-MM-YYYY" class="data-picker" pickerFormat="DD MM YYYY" value="{{data}" (ionChange)="updateMyDate()" [(ngModel)]="selectedData">
       </ion-datetime>
@@ -18,8 +21,8 @@
     </ion-chip>
   </div>
   </ion-toolbar>
-</ion-header>
-<ion-content padding>
+  
+  <div style="padding-top: 90px;">
   <ion-card class="eventcard" *ngFor="let event of events" [hidden]="(selectedCat.length > 0 && selectedCat.indexOf(event.type) === -1) || event.data < todayString" margin-bottom>
       <ion-img [src]="event.largeimage" class="img-list"></ion-img>
       <ion-card-content>
@@ -52,4 +55,5 @@
         </ion-row>
       </ion-card-content>
     </ion-card>
+  </div>
 </ion-content>

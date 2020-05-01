@@ -1,19 +1,16 @@
 <ion-header >
-  <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-          <ion-menu-button color="light"></ion-menu-button>
-      </ion-buttons>
-    <ion-title class="title-ios" text-uppercase>Image Grid</ion-title>
-  </ion-toolbar>
+    <ion-toolbar color='danger'>
+      <ion-title>
+        <h1>Livestuff</h1>
+      </ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid>
-    <ion-row>
-      <div no-padding *ngFor="let p of gridImages">
-        <div (click)='getLiveVideos(p.id)' class="square-grid" [ngStyle]="{'background-image': 'url('+p.image+')'}">
-        </div>
-      </div>
-    </ion-row>
-  </ion-grid>
+    <ion-item>
+        <ion-textarea rows="6" placeholder="Escreva sua sugestão, shows que não constam na agenda ou problemas identificados..."  [(ngModel)]="data.text"></ion-textarea>
+    </ion-item>
+    <button ion-button class="send-button" (click)="sendSuggest()" >
+      Enviar
+    </button>
 </ion-content>

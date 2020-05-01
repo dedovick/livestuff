@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -54,5 +54,13 @@ export class YtService {
     } else {
       return this.http.get('https://live-stuff-server.herokuapp.com/events/' + data);
     }
+  }
+
+  postSuggest(data) {
+    const httpHeader = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    };
+
+    return this.http.post<any>('https://live-stuff-server.herokuapp.com/suggest', data, httpHeader);
   }
 }
