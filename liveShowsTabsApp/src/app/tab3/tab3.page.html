@@ -1,16 +1,39 @@
 <ion-header >
-    <ion-toolbar color='danger'>
-      <ion-title>
-        <h1>Livestuff</h1>
-      </ion-title>
-    </ion-toolbar>
+  <ion-toolbar color='danger'>
+    <ion-row>
+      <ion-col>
+        <ion-title>
+          <h1>Livestuff</h1>
+        </ion-title>
+      </ion-col>
+      <ion-col>
+        <h1>
+          <button ion-button class="shareApp">
+            <img src="assets/icon/share.webp">
+          </button>
+        </h1>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-item>
-        <ion-textarea rows="6" placeholder="Escreva sua sugestão, shows que não constam na agenda ou problemas identificados..."  [(ngModel)]="data.text"></ion-textarea>
-    </ion-item>
-    <button ion-button class="send-button" (click)="sendSuggest()" >
-      Enviar
-    </button>
+  <form (ngSubmit)="sendSuggest()" [formGroup]="suggest" class="text-center">
+    <ion-list>
+      <ion-item>
+          <ion-label><h2>Email:</h2></ion-label>
+          <ion-input placeholder="Email não é obrigatório"  formControlName="email" class="form-control"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label><h2>Sugestão:</h2></ion-label>
+          <ion-textarea rows="6" placeholder="Escreva sua sugestão, shows que não constam na agenda ou problemas identificados..."
+            formControlName="text" class="form-control">
+          </ion-textarea>
+      </ion-item>
+    </ion-list>
+      <button ion-button class="send-button" color="primary" shape="full" expand="block" 
+        type="submit" [disabled]="!suggest.valid">
+        Enviar
+      </button>
+  </form>
 </ion-content>

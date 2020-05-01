@@ -1,6 +1,7 @@
 import { YtService } from './../services/yt/yt.service';
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationExtras } from '@angular/router';
+import {Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
 
 @Component({
   selector: 'app-tab3',
@@ -13,19 +14,29 @@ export class Tab3Page implements OnInit {
   topLevelSagment = 'image';
   videos: any;
   alertCtrl: any;
-  data = {
-    text: ''
-  };
-    constructor(private ytService: YtService) {
-    }
+  public suggest: FormGroup;
 
-    ngOnInit() {
-    }
+  constructor(private ytService: YtService, private formBuilder: FormBuilder,
+              private dialogs: Dialogs) {
+    this.suggest = this.formBuilder.group({
+      text: ['', Validators.required],
+      email: ['', Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')]
+    });
+  }
 
-    sendSuggest() {
-      const res = this.ytService.postSuggest(this.data);
-      res.subscribe(data => {
-        console.log(data);
-      });
-    }
+  ngOnInit() {
+  }
+
+  sendSuggest() {
+    const res = this.ytService.postSuggest(this.suggest.value);
+    res.subscribe(() => {
+      this.suggest.reset();
+    });
+
+    this.dialogs.alert('Sugestão enviada com sucesso!', 'Sugestão')
+     .then(() => console.log('Dialog dismissed'))
+     .catch(e => console.log('Error displaying dialog', e));
+
+    this.suggest.reset();
+  }
   }

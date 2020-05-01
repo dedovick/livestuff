@@ -4,7 +4,14 @@
   position: fixed;
   bottom: 20px;
   height: 30px;
-  background-color: rgb(199, 39, 47);
-  color: white;
   border-radius: 5px;
+}
+
+.shareApp{
+  position: absolute; 
+  height: 38px!important;
+  width: 50px;
+  right: 10px;
+  bottom: 10px;
+  background-color: transparent;
 }

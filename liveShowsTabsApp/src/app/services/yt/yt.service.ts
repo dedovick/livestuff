@@ -61,6 +61,6 @@ export class YtService {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
 
-    return this.http.post<any>('https://live-stuff-server.herokuapp.com/suggest', data, httpHeader);
+    return this.http.post<any>('https://live-stuff-server.herokuapp.com/suggest', JSON.stringify(data), httpHeader);
   }
 }

@@ -14,7 +14,7 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
 export class Tab1Page {
 
   data = undefined;
-  message = 'Assista a live de ';
+  message = 'Live compartilhada pelo APP Livestuff. Assista a live de ';
   youtubeUrl = 'https://www.youtube.com/channel/';
   videoUrl = 'https://www.youtube.com/watch?v=';
   selectedData = undefined;
@@ -97,7 +97,7 @@ export class Tab1Page {
   }
 
   sendShare(event) {
-    this.socialSharing.share(this.message + event.artista, event.title, null, event.url);
+    this.socialSharing.share(this.message + event.artista + ' em', event.title, null, event.url);
     /*if (event.videoId && event.videoId !== '') {
       this.socialSharing.share(this.message + event.artista, event.title, null, this.videoUrl + event.videoId);
     } else {
