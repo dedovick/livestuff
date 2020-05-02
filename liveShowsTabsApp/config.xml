@@ -44,6 +44,12 @@
         <splash density="port-xhdpi" src="resources/splash/default-portrait-1792h@3x.png" />
         <splash density="port-xxhdpi" src="resources/splash/default-portrait-2436h@3x.png" />
         <splash density="port-xxxhdpi" src="resources/splash/default-portrait-2688h@3x.png" />
+        <splash density="ldpi" src="resources/splash/default-568h@2x.png" />
+        <splash density="mdpi" src="resources/splash/default-667h@2x.png" />
+        <splash density="hdpi" src="resources/splash/default-portrait-736h@3x.png" />
+        <splash density="xhdpi" src="resources/splash/default-portrait-1792h@3x.png" />
+        <splash density="xxhdpi" src="resources/splash/default-portrait-2436h@3x.png" />
+        <splash density="xxxhdpi" src="resources/splash/default-portrait-2688h@3x.png" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />

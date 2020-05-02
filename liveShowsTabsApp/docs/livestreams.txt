@@ -16,7 +16,7 @@ To retrieve the start time of an upcoming event, use the videos endpoint with pa
 
 
 
-.\jarsigner.exe -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore D:\Projetos_novo\livestuff-1.0.0-key.keystore D:\Projetos_novo\livestuff\liveShowsTabsApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk live_stuff
-.\zipalign.exe -v 4 D:\Projetos_novo\livestuff\liveShowsTabsApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk D:\Projetos_novo\live-stuff.apk
+.\jarsigner.exe -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore D:\Projetos_novo\livestuff-1.0.0-key.keystore D:\Projetos_novo\livestuffmaster\liveShowsTabsApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk live_stuff
+.\zipalign.exe -v 4 D:\Projetos_novo\livestuffmaster\liveShowsTabsApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk D:\Projetos_novo\live-stuff.apk
 alias = live_stuff
 pswq = livestuff-18273645
