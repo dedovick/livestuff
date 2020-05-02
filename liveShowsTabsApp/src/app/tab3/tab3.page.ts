@@ -16,7 +16,7 @@ export class Tab3Page implements OnInit {
   videos: any;
   alertCtrl: any;
   public suggest: FormGroup;
-  messageApp = 'Baixe o APP Livestuff em ';
+  messageApp = 'Baixe o APP LiveStuff em ';
   appUrl = 'https://play.google.com/store/apps/details?id=live.stuff.ionic';
 
   constructor(private ytService: YtService, private formBuilder: FormBuilder,
@@ -44,7 +44,7 @@ export class Tab3Page implements OnInit {
   }
 
   shareApp() {
-    this.socialSharing.share(this.messageApp, 'Livestuff APP' , null, this.appUrl);
+    this.socialSharing.share(this.messageApp, 'LiveStuff APP' , null, this.appUrl);
   }
 
 }
