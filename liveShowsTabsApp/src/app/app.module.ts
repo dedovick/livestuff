@@ -17,6 +17,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { IonicSelectableModule } from 'ionic-selectable';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
+import { AdMobPro } from '@ionic-native/admob-pro/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,7 +32,8 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
     SocialSharing,
     LocalNotifications,
     Dialogs,
-    NativeStorage
+    NativeStorage,
+    AdMobPro
   ],
   bootstrap: [AppComponent]
 })

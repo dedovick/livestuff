@@ -34,7 +34,7 @@
   </ion-toolbar>
   
   <div style="padding-top: 90px;">
-  <ion-card class="eventcard" *ngFor="let event of events" [hidden]="(selectedCat.length > 0 && selectedCat.indexOf(event.type) === -1) || event.data < todayString" margin-bottom>
+  <ion-card class="eventcard" *ngFor="let event of events" [hidden]="(selectedCat.length > 0 && selectedCat.indexOf(event.type) === -1)" margin-bottom>
       <ion-img [src]="event.largeimage" class="img-list"></ion-img>
       <ion-card-content>
         <ion-row >

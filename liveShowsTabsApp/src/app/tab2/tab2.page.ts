@@ -7,6 +7,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { IonicSelectableComponent } from 'ionic-selectable';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
+import { AdMobPro } from '@ionic-native/admob-pro/ngx';
 
 @Component({
   selector: 'app-tab2',
@@ -30,7 +31,7 @@ export class Tab2Page {
               public alertCtrl: AlertController,
               public modalCtrl: ModalController, public plt: Platform, private youtube: YoutubeVideoPlayer,
               private socialSharing: SocialSharing, private localNotifications: LocalNotifications, private dialogs: Dialogs,
-              private nativeStorage: NativeStorage) {
+              private nativeStorage: NativeStorage, private admob: AdMobPro, private platform: Platform ) {
                 this.nativeStorage.getItem('dataStorage')
                 .then(
                   data => this.dataStorage = data,
@@ -51,6 +52,7 @@ export class Tab2Page {
                 }
                 // calls the function that gets all youtube categories
                 this.getChannels();
+                this.reward();
     }
 
   // this function presents videos based on category selected by user
@@ -143,5 +145,29 @@ export class Tab2Page {
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
 
+  }
+
+  ionViewDidLoad() {
+    this.admob.onAdDismiss()
+      .subscribe(() => { console.log('User dismissed ad'); });
+  }
+
+  reward() {
+    let adId;
+    if (this.platform.is('android')) {
+      adId = 'ca-app-pub-9511742733388692/8645831223';
+    } else if (this.platform.is('ios')) {
+      adId = 'ca-app-pub-9511742733388692/8645831223';
+    }
+    this.admob.prepareRewardVideoAd({
+      adId: adId,
+      isTesting: false // remove in production 
+    })
+      .then(() => {
+        this.admob.showRewardVideoAd();
+      })
+      .catch((err) => {
+        console.log(err)
+      });
   }
 }
