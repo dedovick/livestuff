@@ -1,17 +1,24 @@
 //const http = require('http')
 const port = process.env.PORT || 3000
 const ip = '0.0.0.0'
+const server_url = 'https://live-stuff-server.herokuapp.com/'
 const low = require('lowdb')
 const FileAsync = require('lowdb/adapters/FileAsync')
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const server_url = 'https://live-stuff-server.herokuapp.com/'
+const nodemailer = require('nodemailer')
 
 // Create server
 const app = express()
 app.use(cors())
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
+const authMailer = {
+  user: 'livestuff.app@gmail.com',
+  pass: 'yjdsdigwwgvtzvsm'
+}
 
 // Create database instance and start server
 const adapter = new FileAsync('db.json')
@@ -21,10 +28,15 @@ low(adapter)
     // GET /events
     app.get('/events', (req, res) => {
       const today = new Date();
-      var todayString = '';
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      const date = today.getDate();
+      const year = today.getUTCFullYear();
+      const month = today.getUTCMonth() + 1;
+      var date = today.getUTCDate();
+	  //Vira a data de consulta às 6:00 UTC (3:00 BRT)
+	  if(today.getUTCHours() <= 6){
+		  date -= 1;
+	  }
+	  
+	  var todayString = '';
       if (month > 9) {
         todayString = year + '-' + month;
       } else {
@@ -35,22 +47,19 @@ low(adapter)
       } else {
         todayString += '-0' + date;
       }
-      console.log('AAAAAAAA: ' + todayString);
-      const post = db.get('event').sortBy('data').value();
-      console.log(post);
+      const post = db.get('event').filter(function(value, index, arr){ return value.data >= todayString;}).sortBy('time').sortBy('data').value();
       res.send(post)
     })
 
     // GET /events by date
     app.get('/events/:data', (req, res) => {
-      const post = db.get('event').filter({ data: req.params.data}).value();
-      console.log(post);
+      const post = db.get('event').sortBy('time').filter({ data: req.params.data }).value();
       res.send(post)
     })
-    
+
     // GET /events by idchannel
     app.get('/channels/events/:idyoutube', (req, res) => {
-      const post = db.get('event').filter({ idYoutube: req.params.idyoutube}).value();
+      const post = db.get('event').filter({ idYoutube: req.params.idyoutube }).value();
       res.send(post)
     })
 
@@ -60,29 +69,81 @@ low(adapter)
       const post = db.get('channel').sortBy('nome').value();
       res.send(post)
     })
-	
-	// POST /events
-    app.post('/channels', (req, res) => {
-      db.get('channel')
-		.push(req.body)
-		.last()
-		.assign({ id: Date.now().toString() })
-        .write()
-        .then(post => res.send(post));
+
+    app.get('/categories', (req, res) => {
+      const post = db.get('subcategorias').sortBy('nome').filter({ idCategoria: 1 }).value();
+      res.send(post)
+    })
+
+	app.get('/categorias', (req, res) => {
+      const post = db.get('categorias').sortBy('ordem').value();
+      res.send(post)
     })
 	
-	// POST /events
-    app.post('/events', (req, res) => {
-      db.get('event')
-		.push(req.body)
-		.last()
-		.assign({ id: Date.now().toString() })
+	app.get('/subcategorias/:idCategoria', (req, res) => {
+      const post = db.get('subcategorias').sortBy('nome').filter({ idCategoria: parseInt(req.params.idCategoria) }).value();
+      res.send(post)
+    })
+	
+    app.get('/server', (req, res) => {
+      res.send([{ 'serverUrl': server_url }]);
+    })
+
+    // POST /channels
+    app.post('/channels', (req, res) => {
+      console.log(req.body);
+      db.get('channel')
+        .push(req.body)
+        .last()
+        .assign({ id: Date.now().toString() })
         .write()
         .then(post => res.send(post));
     })
 
-    app.get('/server', (req, res) => {
-	res.send({'serverUrl': server_url});
+    // POST /events
+    app.post('/events', (req, res) => {
+      console.log(req.body);
+      db.get('event')
+        .push(req.body)
+        .last()
+        .assign({ id: Date.now().toString() })
+        .write()
+        .then(post => res.send(post));
+    })
+
+    // POST /suggest
+    app.post('/suggest', (req, res) => {
+      const mailOutput = "<html>\n\
+                        <body>\n\
+                        <table>\n\
+                        <tr>\n\
+                        <td>Email: </td><td>" + (req.body.hasOwnProperty('email') ? req.body.email : "não fornecido") + "</td>\n\
+                        </tr>\n\
+                        <tr>\n\
+                        <td>Sugestão: </td>" + req.body.text + "<td></td>\n\
+                        </tr>\n\
+                        </table></body></html>";
+
+      const mailOptions = {
+        from: 'livestuff.app@gmail.com', // sender address
+        to: 'livestuff.app@gmail.com', // list of receivers
+        subject: 'Sugestões App', // Subject line
+        html: mailOutput // html body
+      }
+
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: authMailer
+      })
+
+      transporter.sendMail(mailOptions, function (err, info) {
+        if (err)
+          console.log(err)
+        else
+          console.log(info);
+      })
+
+      res.end('Email sent')
     })
 
     // Set db default values
