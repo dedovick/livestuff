@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cadastro de Categoria</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+	<%include indice.ejs %>
+    <form action="/addCategoria" method="post">
+        <p>Nome:<input type="text" name="nome" /></p>
+        <p>Ordem:<input type="text" name="ordem" /></p>
+		<p>&Iacute;cone:<input type="text" name="imageIcon" /></p>
+        <p><input type="submit" value="Salvar" /></p>
+    </form>
+</body>
+</html>

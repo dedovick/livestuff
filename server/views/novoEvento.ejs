@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+	<%include indice.ejs %>
+	<div id="conteudo">
+		<h1><%= title %></h1>
+		<form action="/addEvento" method="post">
+			<p>Nome:<input type="text" name="nome" /></p>
+			<p>Canal:
+				<select id="canal" name="canal">
+				<% listaCanais.forEach(function(canal){ %>
+					<option value="<%=JSON.stringify(canal) %>"> <%= canal.nome %> </option>
+				<%})%>
+				</select>
+			</p>
+			<p>Categoria:
+				<select id="categoria" name="subcategoria">
+				<% listaSubCategorias.forEach(function(subcategoria){ %>
+					<option value="<%=JSON.stringify(subcategoria) %>"> <%= subcategoria.nome %> </option>
+				<%})%>
+				</select>
+			</p>
+			<p>Data/Hora:<input type="datetime-local" name="datetime" /></p>
+			<p>Thumb:<input type="text" name="largeImage" /></p>
+			<p>Video ID:<input type="text" name="videoId" /></p>
+			<p>URL:<input type="text" name="url" /></p>
+			<p><input type="submit" value="Salvar" /></p>
+		</form>
+	</div>
+</body>
+</html>

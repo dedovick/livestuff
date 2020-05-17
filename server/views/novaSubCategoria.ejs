@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+	<%include indice.ejs %>
+    <form action="/addSubCategoria" method="post">
+	
+		<p>Categoria:
+			<select id="categoria" name="categoria">
+			<% listaCategorias.forEach(function(categoria){ %>
+				<option value="<%=JSON.stringify(categoria) %>"> <%= categoria.nome %> </option>
+			<%})%>
+			</select>
+		</p>
+        <p>Nome:<input type="text" name="nome" /></p>
+        <p><input type="submit" value="Salvar" /></p>
+    </form>
+</body>
+</html>
