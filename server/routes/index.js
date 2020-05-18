@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const server_url = 'https://live-stuff-server.herokuapp.com/'
+const server_url = 'https://live-stuff-server.herokuapp.com/';
+
+const authMailer = {
+  user: 'livestuff.app@gmail.com',
+  pass: 'yjdsdigwwgvtzvsm'
+}
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -305,5 +310,42 @@ router.get('/server', function(req, res) {
   res.json([{ 'serverUrl': server_url }]);
   res.end();
 });
+
+// POST /suggest
+router.post('/suggest', (req, res) => {
+	
+  const nodemailer = require('nodemailer')
+  const mailOutput = "<html>\n\
+					<body>\n\
+					<table>\n\
+					<tr>\n\
+					<td>Email: </td><td>" + (req.body.hasOwnProperty('email') ? req.body.email : "não fornecido") + "</td>\n\
+					</tr>\n\
+					<tr>\n\
+					<td>Sugestão: </td>" + req.body.text + "<td></td>\n\
+					</tr>\n\
+					</table></body></html>";
+
+  const mailOptions = {
+	from: (req.body.hasOwnProperty('email') ? req.body.email : 'livestuff.app@gmail.com'), // sender address
+	to: 'livestuff.app@gmail.com', // list of receivers
+	subject: 'Sugestões App', // Subject line
+	html: mailOutput // html body
+  }
+
+  const transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: authMailer
+  })
+
+  transporter.sendMail(mailOptions, function (err, info) {
+	if (err)
+	  console.log(err)
+	else
+	  console.log(info);
+  })
+
+  res.end('Email sent')
+})
 
 module.exports = router;
