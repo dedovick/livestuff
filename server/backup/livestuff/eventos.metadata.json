@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"livestuff.eventos"}],"uuid":"087467da74d5482ca68c249b666e201c"}

@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"livestuff.subcategorias"}],"uuid":"d41dbdc315084d01af0206180796fe82"}
