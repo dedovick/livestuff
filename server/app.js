@@ -1,3 +1,7 @@
+const passport = require('passport')  
+const session = require('express-session')  
+const MongoStore = require('connect-mongo')(session)
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -13,6 +17,19 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+require('./auth')(passport);
+app.use(session({  
+  store: new MongoStore({
+	url: process.env.MONGO_CONNECTION,
+    db: global.db,
+    ttl: 30 * 60 // = 30 minutos de sessão
+  }),
+  secret: '1!\/&$tufF',
+  resave: false,
+  saveUninitialized: true
+})); 
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

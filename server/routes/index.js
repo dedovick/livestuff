@@ -1,5 +1,8 @@
 var express = require('express');
+var moment = require('moment-timezone');
 var router = express.Router();
+var passport = require('passport');
+ 
 const server_url = 'https://live-stuff-server.herokuapp.com/';
 
 const authMailer = {
@@ -8,9 +11,19 @@ const authMailer = {
 }
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'LiveStuff Admin' });
+router.get('/', authenticationMiddleware (), function(req, res, next) {
+	// res.render('login', {message: null});
+	res.render('index', { title: 'LiveStuff Admin' });
 });
+
+function authenticationMiddleware () {  
+  return function (req, res, next) {
+    if (req.isAuthenticated()) {
+      return next()
+    }
+    res.redirect('/login?fail=true')
+  }
+}
 
 var getCategorias = function(callback){
    var db = require("../db");
@@ -25,18 +38,57 @@ var getSubCategorias = function(callback, filter){
    Categorias.find(filter).lean().exec(callback);
 };
 
-var getCanais = function(callback){
+var getCanais = function(callback, filter, sort){
+   sort = sort || {nome : 1};
+   filter = filter || {};
    var db = require("../db");
    var Canais = db.Mongoose.model('canais', db.Canal, 'canais');
-   Canais.find({}).lean().exec(callback);
+   Canais.find(filter).sort(sort).lean().exec(callback);
 };
 
-var getEventos = function(callback, filter){
+var getEventos = function(callback, timezone, filter, sort){
+	sort = sort || {dataHora : 1};
 	filter = filter || {};
+	if(!timezone){
+		timezone = "America/Sao_Paulo";
+	}
 	var db = require("../db");
 	var Eventos = db.Mongoose.model('eventos', db.Evento, 'eventos');
-	Eventos.find(filter).lean().exec(callback);
+	Eventos.find(filter).sort(sort).lean().exec(function (e, docs) {
+		var result = [];
+		var resultTmp = {}, dataTemp;
+		docs.forEach(function(evento){
+			resultTmp = {
+				id: evento._id,
+				artista: evento.canais[0].nome,
+				type: evento.subcategorias[0].nome,
+				largeimage: evento.largeimage,
+				title: evento.titulo,
+				videoId: evento.videoId,
+				url: evento.url
+			}
+			resultTmp.dataHoraUTC = evento.dataHora;
+			dataTemp = moment(evento.dataHora).tz(timezone);
+			resultTmp.dataHora = dataTemp.format();
+			resultTmp.data = dataTemp.format('YYYY-MM-DD');
+			resultTmp.hora = dataTemp.format('HH:mm');
+			result.push(resultTmp);
+		});
+		callback(e, result);
+	});
+	
 };
+
+router.get('/login', function(req, res){
+  if(req.query.fail)
+    res.render('login', { message: 'Usuário e/ou senha incorretos!' });
+  else
+    res.render('login', { message: null });
+});
+ 
+router.post('/login',
+  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login?fail=true' })
+);
 
 /* GET CategoryList page. */
 router.get('/listaCategorias', function(req, res) {
@@ -203,6 +255,8 @@ router.post('/addCanal', function (req, res) {
 router.get('/listaEventos', function(req, res) {
    getEventos(
       function (e, docs) {
+		 var evento = docs[0];
+		 console.log(moment(docs[0].dataHora).tz("-0300").format());
          res.render('listaEventos', { "listaEventos": docs });
    });
 });
@@ -212,25 +266,29 @@ router.get('/channels/events/:idyoutube', (req, res) => {
 	getEventos(function (e, docs) {
          res.json(docs);
 		 res.end();
-	}, {"canais.idYoutube": req.params.idyoutube});
+	},
+	undefined,
+	{"canais.idYoutube": req.params.idyoutube});
 });
 
 // GET /events 
 router.get('/events', (req, res) => {
-	const today = new Date();
-	const year = today.getUTCFullYear();
-	const month = today.getUTCMonth();
-	var date = today.getUTCDate();
-	//Vira a data de consulta às 6:00 UTC (3:00 BRT)
-	if(today.getUTCHours() <= 6){
-	  date -= 1;
+	var timezone = req.query.tz;
+	if(!timezone){
+		timezone = "America/Sao_Paulo";
 	}
-
-	var dateFilter = new Date(Date.UTC(year, month, date));
+	
+	var dateFilter = moment().tz(timezone);
+	if(dateFilter.hours() <= 6){
+		dateFilter.subtract(1, 'days');
+	}
+	const today = new Date(dateFilter.startOf('day').format());
 	getEventos(function (e, docs) {
-         res.json(docs);
-		 res.end();
-	}, {dataHora: {$gte: dateFilter}});
+        res.json(docs);
+		res.end();
+	},
+	timezone, 
+	{dataHora: {$gte: today}});
 });
 
 // GET /events 
@@ -238,26 +296,26 @@ router.post('/eventsById', (req, res) => {
 	getEventos(function (e, docs) {
          res.json(docs);
 		 res.end();
-	}, { _id: req.body.listaIds});
+	}, undefined, { _id: req.body.listaIds});
 });
 
 // GET /events by date
 router.get('/events/:data', (req, res) => {
 	var dataFiltro = req.params.data;
+	var timezone = req.query.tz;
+	if(!timezone){
+		timezone = "America/Sao_Paulo";
+	}
 	
-	var ano = parseInt(dataFiltro.substring(0,4));
-	var mes = parseInt(dataFiltro.substring(5,7)) - 1;
-	var dia = parseInt(dataFiltro.substring(8,10));
+	var dateFilter = moment(dataFiltro, "YYYY-MM-DD").tz(timezone);
 
-	var start = new Date(Date.UTC(ano, mes, dia));
-	
-	var end = new Date(Date.UTC(ano, mes, dia));
-	end.setUTCHours(23,59,59,999);
-	    
+	var start = new Date(dateFilter.startOf('day').format());
+	dateFilter.add(1, 'days');
+	var end = new Date(dateFilter.startOf('day').format());
 	getEventos(function (e, docs) {
 		res.json(docs);
 		res.end();
-	}, {dataHora: {$gte: start, $lt: end}});
+	}, timezone, {dataHora: {$gte: start, $lt: end}});
 });
 
 /* GET AddEvent page. */

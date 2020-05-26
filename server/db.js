@@ -1,6 +1,12 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/livestuff');
 
+var userSchema = new mongoose.Schema({
+	username: String,
+	senha: String,
+	email: String
+}, { collection: 'usuarios' }
+);
 var categorySchema = new mongoose.Schema({
     nome: String,
     ordem: Number,

@@ -9,7 +9,7 @@
 		 <h1 class="text-center title-1"> Lista de Eventos </h1>
 		 <ul>
 		 <% listaEventos.forEach(function(evento){ %>
-		 <li><%= evento.titulo %>&nbsp;<%= evento.dataHora.toISOString() %></li> 
+		 <li><%= evento.title %>&nbsp;<%= evento.dataHoraUTC %></li> 
 		 <%})%>
 		 </ul>
 	</div>
