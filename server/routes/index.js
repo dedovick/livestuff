@@ -313,7 +313,6 @@ router.get('/events/:data', (req, res) => {
 	dateFilter.add(1, 'days');
 	var end = new Date(dateFilter.startOf('day').format());
 	getEventos(function (e, docs) {
-		docs.push({start: start, end:end});
 		res.json(docs);
 		res.end();
 	}, timezone, {dataHora: {$gte: start, $lt: end}});
