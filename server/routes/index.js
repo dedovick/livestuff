@@ -307,12 +307,13 @@ router.get('/events/:data', (req, res) => {
 		timezone = "America/Sao_Paulo";
 	}
 	
-	var dateFilter = moment(dataFiltro, "YYYY-MM-DD").tz(timezone);
+	var dateFilter = moment.tz(dataFiltro, 'YYYY-MM-DD', true, timezone);
 
 	var start = new Date(dateFilter.startOf('day').format());
 	dateFilter.add(1, 'days');
 	var end = new Date(dateFilter.startOf('day').format());
 	getEventos(function (e, docs) {
+		docs.push({start: start, end:end});
 		res.json(docs);
 		res.end();
 	}, timezone, {dataHora: {$gte: start, $lt: end}});
