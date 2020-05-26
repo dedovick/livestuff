@@ -4,6 +4,7 @@ const MongoStore = require('connect-mongo')(session)
 
 var createError = require('http-errors');
 var express = require('express');
+var cors = require('cors')
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -27,7 +28,8 @@ app.use(session({
   secret: '1!\/&$tufF',
   resave: false,
   saveUninitialized: true
-})); 
+}));
+app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(logger('dev'));
