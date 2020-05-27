@@ -1,0 +1,20 @@
+.scrolling-wrapper {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    margin-left: 12px;
+    .card {
+      display: inline-block;
+    }
+  }
+
+.sub-cta-selected {
+  --background: thistle;
+}
+
+.data-button{
+  --border-style: solid !important;
+  --border-color: white !important;
+  --border-width: 1px !important;
+  width: 100%;
+}

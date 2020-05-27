@@ -1,5 +1,7 @@
 {
   "name": "liveStuffApp",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

@@ -24,3 +24,26 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+@font-face {
+    font-family: 'Muli-Light';
+    src: url('assets/font/Muli-Light.ttf');
+}
+@font-face {
+    font-family: 'Muli-ExtraBold';
+    src: url('assets/font/Muli-ExtraBold.ttf');
+}
+@font-face {
+    font-family: 'Muli-Bold';
+    src: url('assets/font/Muli-Bold.ttf');
+}
+@font-face {
+    font-family: 'Muli-SemiBold';
+    src: url('assets/font/Muli-SemiBold.ttf');
+}
+* {
+    font-family: 'Muli-Light';
+    font-family: 'Muli-ExtraBold';
+    font-family: 'Muli-Bold';
+    font-family: 'Muli-SemiBold';
+}
