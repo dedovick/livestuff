@@ -3,7 +3,7 @@ var moment = require('moment-timezone');
 var router = express.Router();
 var passport = require('passport');
  
-const server_url = 'https://live-stuff-server.herokuapp.com/';
+const server_url = 'http://34.67.130.241:3000/';
 
 const authMailer = {
   user: 'livestuff.app@gmail.com',
@@ -11,7 +11,7 @@ const authMailer = {
 }
 
 /* GET home page. */
-router.get('/', authenticationMiddleware (), function(req, res, next) {
+router.get('/', authenticationMiddleware(), function(req, res, next) {
 	// res.render('login', {message: null});
 	res.render('index', { title: 'LiveStuff Admin' });
 });
@@ -91,7 +91,7 @@ router.post('/login',
 );
 
 /* GET CategoryList page. */
-router.get('/listaCategorias', function(req, res) {
+router.get('/listaCategorias', authenticationMiddleware(), function(req, res) {
    getCategorias(function (e, docs) {
          res.render('listaCategorias', { "listaCategorias": docs });
    });
@@ -105,12 +105,12 @@ router.get('/categorias', function(req, res) {
 });
 
 /* GET AddCategory page. */
-router.get('/categorias/cadastro', function(req, res) {
+router.get('/categorias/cadastro', authenticationMiddleware(), function(req, res) {
 	res.render('novaCategoria', { title: 'Cadastrar categoria' });
 });
 
 /* POST Adiciona categoria no banco */
-router.post('/addCategoria', function (req, res) {
+router.post('/addCategoria', authenticationMiddleware(), function (req, res) {
  
     var db = require("../db");
     var nomeCategoria = req.body.nome;
@@ -132,7 +132,7 @@ router.post('/addCategoria', function (req, res) {
 });
 
 /* GET CategoryList page. */
-router.get('/listaSubcategorias', function(req, res) {
+router.get('/listaSubcategorias', authenticationMiddleware(), function(req, res) {
 
    getSubCategorias(function (e, docs) {
          res.render('listaSubCategorias', { "listaSubCategorias": docs });
@@ -140,7 +140,7 @@ router.get('/listaSubcategorias', function(req, res) {
 });
 
 /* GET AddSubCategory page. */
-router.get('/subcategorias/cadastro', function(req, res) {
+router.get('/subcategorias/cadastro', authenticationMiddleware(), function(req, res) {
    getCategorias(function (e, docs) {
 		res.render('novaSubCategoria', { 
 			title: 'Cadastrar subcategoria',
@@ -166,7 +166,7 @@ router.get('/subcategorias/:idCategoria', function(req, res) {
 })
 
 /* POST Adiciona categoria no banco */
-router.post('/addSubCategoria', function (req, res) {
+router.post('/addSubCategoria', authenticationMiddleware(), function (req, res) {
  
     var db = require("../db");
     var nomeSubCategoria = req.body.nome;
@@ -187,7 +187,7 @@ router.post('/addSubCategoria', function (req, res) {
 });
 
 /* GET CategoryList page. */
-router.get('/listaCanais', function(req, res) {
+router.get('/listaCanais', authenticationMiddleware(), function(req, res) {
    getCanais(
       function (e, docs) {
          res.render('listaCanais', { "listaCanais": docs });
@@ -204,7 +204,7 @@ router.get('/channels', (req, res) => {
 })
 
 /* GET AddChannel page. */
-router.get('/canais/cadastro', function(req, res) {
+router.get('/canais/cadastro', authenticationMiddleware(), function(req, res) {
    getCategorias(function (e, docs) {
 		res.render('novoCanal', { 
 			title: 'Cadastrar canal',
@@ -215,7 +215,7 @@ router.get('/canais/cadastro', function(req, res) {
 });
 
 /* POST Adiciona categoria no banco */
-router.post('/addCanal', function (req, res) {
+router.post('/addCanal', authenticationMiddleware(), function (req, res) {
  
     var db = require("../db");
 	var canalAdd = {
@@ -252,11 +252,9 @@ router.post('/addCanal', function (req, res) {
 });
 
 /* GET CategoryList page. */
-router.get('/listaEventos', function(req, res) {
+router.get('/listaEventos', authenticationMiddleware(), function(req, res) {
    getEventos(
       function (e, docs) {
-		 var evento = docs[0];
-		 console.log(moment(docs[0].dataHora).tz("-0300").format());
          res.render('listaEventos', { "listaEventos": docs });
    });
 });
@@ -319,7 +317,7 @@ router.get('/events/:data', (req, res) => {
 });
 
 /* GET AddEvent page. */
-router.get('/eventos/cadastro', function(req, res) {
+router.get('/eventos/cadastro', authenticationMiddleware(), function(req, res) {
    getSubCategorias(function (e, subcategorias) {
 		getCanais(function (err, canais){
 			res.render('novoEvento', { 
@@ -333,7 +331,7 @@ router.get('/eventos/cadastro', function(req, res) {
 });
 
 /* POST Adiciona categoria no banco */
-router.post('/addEvento', function (req, res) {
+router.post('/addEvento', authenticationMiddleware(), function (req, res) {
  
     var db = require("../db");
 	var canais = [];
