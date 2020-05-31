@@ -15,6 +15,8 @@ To find scheduled live events on a channel, use the search endpoint with a chann
 To retrieve the start time of an upcoming event, use the videos endpoint with part=liveStreamingDetails
 
 
+
+ionic cordova build android --prod --release
 C:\Program Files\Java\jdk1.8.0_162\bin>
 .\jarsigner.exe -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore D:\Projetos_novo\livestuff-1.0.0-key.keystore D:\Projetos_novo\livestuffmaster\liveStuffApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk live_stuff
 C:\Program Files (x86)\android-4.4.2>

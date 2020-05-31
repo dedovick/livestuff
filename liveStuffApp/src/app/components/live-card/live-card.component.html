@@ -1,0 +1,37 @@
+<ion-card>
+  <div style="margin-bottom: -45px;">
+    <img src="{{event.largeimage}}" style="background-color: whitesmoke; width: 100%;"/>
+    <ion-chip style="z-index: 1000; top: -45px; position: relative; background-color: azure;">
+      <ion-label color="dark" style="size: 8px; font-family: Muli-Light;">{{event.type}}</ion-label>
+    </ion-chip>
+  </div>
+  <ion-card-header>
+    <ion-card-title style="font-family: Muli-SemiBold; color: #000000;">{{event.artista}}</ion-card-title>
+    <!--<ion-card-subtitle style="font-family: Muli-SemiBold; color: #e15f93;">{{event.data.substring(8,10)}} de {{getMonth(event.data.substring(5,7))}} às {{event.time}}h</ion-card-subtitle>-->
+    <ion-card-subtitle style="font-family: Muli-SemiBold; color: #e15f93;">{{moment(date).format('ddd')}} - {{date.getDate()}} de {{moment(date).format('MMMM')}} às {{event.hora}}h</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-icon name="information-circle"></ion-icon>
+    <ion-label style="font-size: 12sp; font-family: Muli-Light;"> {{event.title}}</ion-label>
+    <ion-list lines="none">
+      <ion-item>
+        <ion-button *ngIf="event.data === todaystring" class="card" slot="start" (click)="openUrl(event)"
+          style="--border-radius: 20px; width: 60%; --background: linear-gradient(to bottom right, #eb0000 0%, #f094ff 100%) !important;">
+          <ion-label color="white">Assista agora</ion-label>
+        </ion-button>
+        <ion-button *ngIf="event.data != todaystring && dataStorage.schedule.indexOf(event.id) < 0" class="card" slot="start" (click)="sheduleEvent(event)"
+          style="--border-radius: 20px; width: 60%; --background: linear-gradient(to bottom right, #eb0000 0%, #f094ff 100%) !important;">
+          <ion-label color="white">Agendar evento</ion-label>
+        </ion-button>
+        <ion-button *ngIf="event.data != todaystring && dataStorage.schedule.indexOf(event.id) >= 0" class="card" slot="start"
+          style="--border-radius: 20px; width: 60%; --background: thistle" (click)="removeEvent(event)">
+          <ion-label color="white">Evento agendado</ion-label>
+        </ion-button>
+        <ion-button class="card" slot="end" (click)="sendShare(event)" 
+          style="width: 40px; --border-radius: 20px; --background: linear-gradient(to bottom right, #eb0000 0%, #f094ff 100%) !important;">
+          <img src="assets/icon/drawable/share_24_px.svg">
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

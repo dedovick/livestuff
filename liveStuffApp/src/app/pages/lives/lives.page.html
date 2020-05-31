@@ -1,0 +1,69 @@
+<ion-header style="background: linear-gradient(to bottom right, #eb0000 0%, #f094ff 100%) !important;">
+  <ion-toolbar [hidden]="!hidesearchbar || !hidecategorybar" style="--background: transparent">
+    <ion-buttons slot="end">
+      <ion-button ion-button class="shareApp">
+        <img src="assets/icon/drawable/share_24_px.svg" (click)="shareApp()">
+      </ion-button>
+      <ion-button (click)="openSearchBar()" >
+        <ion-icon name="search-sharp" style="color: white;"></ion-icon>
+      </ion-button>
+      <ion-button (click)="openCategoryBar()" >
+        <ion-icon name="{{selectedComponent.icon}}-sharp" style="color: white;"></ion-icon>
+      </ion-button>
+      <!--<ion-menu-button style="color: white;"></ion-menu-button>-->
+    </ion-buttons>
+    <ion-label style="margin-left: 14px;"><h1 style="display: inline; font-family: Muli-Bold; color: #ffffff;">LiveStuff </h1>   <h3 style="display: inline; font-family: Muli-Light; color: #ffffff;">{{selectedComponent.title}}</h3></ion-label>
+  </ion-toolbar>
+  <ion-toolbar [hidden]="hidesearchbar" style="padding-top: 20px; --background: transparent">
+    <ion-buttons>
+      <ion-searchbar show-cancel-button="always" [(ngModel)]='searchValue' (ionCancel)="openSearchBar()" animated></ion-searchbar>
+      <ion-button (click)="openCategoryBar()" style="padding-bottom: 10px;">
+        <ion-icon name="{{selectedComponent.icon}}-sharp" style="color: white;"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar [hidden]="hidecategorybar" style="padding-top: 10px; --background: transparent">
+    <ion-buttons slot="end">
+      <ion-button *ngFor="let cat of catList" (click)="selectCatBar(cat)" >
+        <ion-icon name="{{cat.icon}}-outline" style="color: white;"></ion-icon>
+      </ion-button>
+      <ion-button (click)="openCategoryBar()" >
+        <ion-icon name="{{selectedComponent.icon}}-sharp" style="color: white;"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar style="--background: transparent">
+    <div padding class="scrolling-wrapper" scrollX="true">
+      <div *ngFor="let cat of categorias " class="card">
+        <ion-chip  [hidden]="cat.value <= 0" [ngClass]="{'sub-cta-selected': selectedCat === cat.key}">
+          <ion-label color="dark" (click)="selectCategory(cat.key)" >{{cat.key}} ({{cat.value}})</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+    <ion-item color="none" lines="none">
+      <div style="width: 60%; text-align: start;">
+        <ion-buttons style="width: 100%;" slot="star">
+          <ion-button (click)="selectData()" class="data-button">
+            <ion-icon name="calendar-sharp" style="color: white;"></ion-icon>
+            <ion-label style="color: white; margin-left: 6px;">{{showData}}</ion-label>
+          </ion-button>
+        </ion-buttons>
+      </div>
+      <div style="width: 20%; text-align: end;">
+        <ion-button color="red" (click)="cleanData()" style="margin-left: 5%;" [hidden]="showData === 'DATA'">
+          <ion-label>Limpar</ion-label>
+        </ion-button>
+      </div>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngFor="let event of events">
+    <app-live-card [event]="event" [todaystring]="todayString" [hidden]="(selectedCat != '' && event.type != selectedCat) ||
+    (searchValue != '' && (event.artista.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 &&
+                           event.type.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 &&
+                           event.title.toLowerCase().indexOf(searchValue.toLowerCase()) === -1)
+    )"></app-live-card>
+  </div>
+</ion-content>
