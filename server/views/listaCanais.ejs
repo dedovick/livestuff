@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+	<%include indice.ejs %>
+	<div id="conteudo">
+		 <h1 class="text-center title-1"> Lista de Canais </h1>
+		 <ul> 
+		 <% listaCanais.forEach(function(canal){ %>
+		 <li><%= canal.nome %>&nbsp;(<%= canal.categoria.nome %>)
+			<% if(canal.idYoutube) { %>
+			<ul><a href="https://www.youtube.com/channel/<%= canal.idYoutube%>" target="_blank">Youtube</a></ul>
+			<% } if(canal.idFacebook) { %>
+			<ul><a href="https://www.facebook.com/<%= canal.idFacebook%>" target="_blank">Facebook</a></ul>
+			<% } if(canal.idVimeo) { %>
+			<ul><a href="https://vimeo.com/<%= canal.idVimeo%>" target="_blank">Vimeo</a></ul>
+			<% } if(canal.idTwitch) { %>
+			<ul><a href="https://www.twitch.tv/<%= canal.idTwitch%>" target="_blank">Twitch</a></ul>
+			<% } %>
+		 </li>		
+		 <%})%>
+		 </ul>
+	</div>
+</body>
+</html>

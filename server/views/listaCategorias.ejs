@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+	<%include indice.ejs %>
+	<div id="conteudo">
+		 <h1 class="text-center title-1"> Lista de Categorias </h1>
+		 <ul>
+		 <% listaCategorias.forEach(function(categoria){ %>
+		 <li><%= categoria.ordem %>&nbsp;-&nbsp;<%= categoria.nome %>&nbsp;-&nbsp;<%= categoria.imageIcon %></li> 
+		 <%})%>
+		 </ul>
+	</div>
+</body>
+</html>

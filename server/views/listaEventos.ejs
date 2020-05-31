@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+	<%include indice.ejs %>
+	<div id="conteudo">
+		 <h1 class="text-center title-1"> Lista de Eventos </h1>
+		 <ul>
+		 <% listaEventos.forEach(function(evento){ %>
+		 <li><%= evento.title %>&nbsp;<%= evento.dataHoraUTC %></li> 
+		 <%})%>
+		 </ul>
+	</div>
+</body>
+</html>
