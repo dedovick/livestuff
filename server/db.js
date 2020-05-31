@@ -35,6 +35,7 @@ var eventSchema = new mongoose.Schema({
     titulo: String,
     canais: [channelSchema],
 	dataHora: Date,
+	categorias: [categorySchema],
 	subcategorias: [subCategorySchema],
 	largeImage: String,
 	status: String,

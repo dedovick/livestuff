@@ -25,10 +25,11 @@ function authenticationMiddleware () {
   }
 }
 
-var getCategorias = function(callback){
+var getCategorias = function(callback, filter){
+   //Exclui categoria destaque
    var db = require("../db");
    var Categorias = db.Mongoose.model('categorias', db.Categoria, 'categorias');
-   Categorias.find({}).lean().exec(callback);
+   Categorias.find(filter).lean().exec(callback);
 };
 
 var getSubCategorias = function(callback, filter){
@@ -126,7 +127,7 @@ router.post('/addCategoria', authenticationMiddleware(), function (req, res) {
         }
         else {
             console.log("Post saved");
-            res.redirect("categorias");
+            res.redirect("listaCategorias");
         }
     });
 });
@@ -180,7 +181,7 @@ router.post('/addSubCategoria', authenticationMiddleware(), function (req, res) 
         }
         else {
             console.log("Post saved");
-            res.redirect("subcategorias");
+            res.redirect("listaSubcategorias");
         }
     });
  
@@ -235,7 +236,6 @@ router.post('/addCanal', authenticationMiddleware(), function (req, res) {
 	if(req.body.idTwitch){
 		canalAdd.idTwitch = req.body.idTwitch;
 	}
-	console.log(canalAdd);
 	var Canais = db.Mongoose.model('canais', db.Canal, 'canais');
     var canal = new Canais(canalAdd);
     canal.save(function (err) {
@@ -245,7 +245,7 @@ router.post('/addCanal', authenticationMiddleware(), function (req, res) {
         }
         else {
             console.log("Post saved");
-            res.redirect("canais");
+            res.redirect("listaCanais");
         }
     });
  
@@ -275,18 +275,26 @@ router.get('/events', (req, res) => {
 	if(!timezone){
 		timezone = "America/Sao_Paulo";
 	}
+	var category = req.query.cat;
+	var filter = {};
+	if(category){
+		filter["categorias.ordem"] = category;
+	}
 	
 	var dateFilter = moment().tz(timezone);
 	if(dateFilter.hours() <= 6){
 		dateFilter.subtract(1, 'days');
 	}
 	const today = new Date(dateFilter.startOf('day').format());
+	filter.dataHora = {
+		$gte: today
+	};
 	getEventos(function (e, docs) {
         res.json(docs);
 		res.end();
 	},
 	timezone, 
-	{dataHora: {$gte: today}});
+	filter);
 });
 
 // GET /events 
@@ -304,43 +312,72 @@ router.get('/events/:data', (req, res) => {
 	if(!timezone){
 		timezone = "America/Sao_Paulo";
 	}
+	var filter = {};
+	var category = req.query.cat;
+	if(category){
+		filter["categorias.ordem"] = category;
+	}
 	
 	var dateFilter = moment.tz(dataFiltro, 'YYYY-MM-DD', true, timezone);
 
 	var start = new Date(dateFilter.startOf('day').format());
 	dateFilter.add(1, 'days');
 	var end = new Date(dateFilter.startOf('day').format());
+	filter.dataHora = {
+		$gte: start, 
+		$lt: end
+	};
 	getEventos(function (e, docs) {
 		res.json(docs);
 		res.end();
-	}, timezone, {dataHora: {$gte: start, $lt: end}});
+	}, 
+	timezone, 
+	filter);
 });
 
 /* GET AddEvent page. */
 router.get('/eventos/cadastro', authenticationMiddleware(), function(req, res) {
-   getSubCategorias(function (e, subcategorias) {
-		getCanais(function (err, canais){
-			res.render('novoEvento', { 
-				title: 'Cadastrar evento',
-				listaSubCategorias: subcategorias,
-				listaCanais: canais
+   getCategorias(function(e, categorias){
+		getSubCategorias(function (e, subcategorias) {
+			getCanais(function (err, canais){
+				res.render('novoEvento', { 
+					title: 'Cadastrar evento',
+					listaSubCategorias: subcategorias,
+					listaCanais: canais,
+					listaCategorias: categorias
+				});
 			});
 		});
-   });
+	});
 	
 });
 
+router.post('/eventos/desativar/:idEvento', authenticationMiddleware(), function(req, res){
+	var idEvento = req.params.idEvento;
+	
+});
+
+
+var addEvento = function(req, res, callback){
+
+};
 /* POST Adiciona categoria no banco */
 router.post('/addEvento', authenticationMiddleware(), function (req, res) {
  
     var db = require("../db");
 	var canais = [];
 	canais.push(JSON.parse(req.body.canal));
+	var categorias = [];
+	categorias.push(JSON.parse(req.body.categoria));
+	if(req.body.destaque){
+		categorias.push(JSON.parse(req.body.destaque));
+	}
 	var subcategorias = [];
 	subcategorias.push(JSON.parse(req.body.subcategoria));
 	var eventoAdd = {
 		titulo: req.body.nome,
 		canais: canais,
+		categorias: categorias,
 		subcategorias: subcategorias,
 		status: 0,
 		dataHora: req.body.datetime
@@ -355,7 +392,7 @@ router.post('/addEvento', authenticationMiddleware(), function (req, res) {
         }
         else {
             console.log("Post saved");
-            res.redirect("eventos");
+            res.redirect("listaEventos");
         }
     });
 	
