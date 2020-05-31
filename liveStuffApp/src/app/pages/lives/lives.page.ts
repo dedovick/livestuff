@@ -7,6 +7,9 @@ import { LoadingControlleServiceService } from 'src/app/service/loading-controll
 import { GoogleAnalytics } from '@ionic-native/google-analytics/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { DatePicker } from '@ionic-native/date-picker/ngx';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { Globalization, GlobalizationOptions } from '@ionic-native/globalization/ngx';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-lives',
@@ -71,11 +74,13 @@ export class LivesPage implements OnInit {
       icon: 'bookmark'
     }
   ];
+  option: GlobalizationOptions;
+  moment: any = moment;
 
   constructor(private activatedRoute: ActivatedRoute, private serverClientService: ServerClientService,
-              private categoryService: CategoryService, private changeDetectionRef: ChangeDetectorRef,
+              private categoryService: CategoryService, private changeDetectionRef: ChangeDetectorRef, private globalization: Globalization,
               private nativeStorageService: NativeStorageService, private loadingControllerService: LoadingControlleServiceService,
-              private ga: GoogleAnalytics, private socialSharing: SocialSharing, private datePicker: DatePicker) {
+              private ga: GoogleAnalytics, private socialSharing: SocialSharing, private datePicker: DatePicker, private dialogs: Dialogs) {
                 this.loadingControllerService.present();
                 const year = this.today.getFullYear();
                 const month = this.today.getMonth() + 1;
@@ -98,9 +103,11 @@ export class LivesPage implements OnInit {
     this.dataStorage = this.nativeStorageService.getdataStorage();
     // this.selectedComponent = this.activatedRoute.snapshot.paramMap.get('id');
     this.selectedComponent = this.catList[0];
-    /*this.ga.trackView('Lives Page ' + this.selectedComponent)
-    .then(() => {})
-    .catch(e => console.log('Error starting GoogleAnalytics == ' + e));*/
+    moment.locale('pt-br');
+    
+    this.globalization.getPreferredLanguage()
+    .then(res => moment.locale(res.value))
+    .catch(e => console.log(e));
 
     this.categorias = this.categoryService.getSubCategorys();
 
@@ -110,7 +117,14 @@ export class LivesPage implements OnInit {
       this.events = data;
       this.loadingControllerService.dismiss();
       this.changeDetectionRef.detectChanges();
-    });
+
+    },
+    err => {
+      this.dialogs.alert('Error:', err, 'Erro')
+        .then(() => console.log('Dialog dismissed'))
+        .catch(e => console.log('Error displaying dialog', e));
+    },
+    () => console.log('HTTP request completed.'));
   }
 
   selectCategory(category) {
@@ -217,12 +231,22 @@ export class LivesPage implements OnInit {
 
     this.categoryService.clearData();
     this.loadingControllerService.present();
-    const resLives = this.serverClientService.getEvents(undefined);
-    resLives.subscribe(data => {
-      this.events = data;
-      this.loadingControllerService.dismiss();
-      this.changeDetectionRef.detectChanges();
-    });
+
+    if (this.selectedComponent.url === 'salvos') {
+      const resLives = this.serverClientService.getEventsById();
+      resLives.subscribe(data => {
+        this.events = data;
+        this.loadingControllerService.dismiss();
+        this.changeDetectionRef.detectChanges();
+      });
+    } else {
+      const resLives = this.serverClientService.getEvents(undefined);
+      resLives.subscribe(data => {
+        this.events = data;
+        this.loadingControllerService.dismiss();
+        this.changeDetectionRef.detectChanges();
+      });
+    }
     this.hidecategorybar = !this.hidecategorybar;
   }
 

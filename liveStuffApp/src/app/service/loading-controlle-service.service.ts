@@ -11,24 +11,31 @@ export class LoadingControlleServiceService {
   constructor(private loadingController: LoadingController) { }
 
   async present() {
-    this.isLoading = true;
-    setTimeout( () => {
-      this.dismiss();
-    }, 8000);
-    return await this.loadingController.create({
-      // duration: 5000,
-    }).then(a => {
-      a.present().then(() => {
-        console.log('presented');
-        if (!this.isLoading) {
-          a.dismiss().then(() => console.log('abort presenting'));
+    if (!this.isLoading) {
+      this.isLoading = true;
+      setTimeout( () => {
+        if (this.isLoading) {
+          this.dismiss();
+          this.isLoading = false;
         }
+      }, 8000);
+      return await this.loadingController.create({
+        // duration: 5000,
+      }).then(a => {
+        a.present().then(() => {
+          console.log('presented');
+          if (!this.isLoading) {
+            a.dismiss().then(() => console.log('abort presenting'));
+          }
+        });
       });
-    });
+    }
   }
 
   async dismiss() {
-    this.isLoading = false;
-    return await this.loadingController.dismiss().then(() => console.log('dismissed'));
+    if (this.isLoading) {
+      this.isLoading = false;
+      return await this.loadingController.dismiss().then(() => console.log('dismissed'));
+    }
   }
 }

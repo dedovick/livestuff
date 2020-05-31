@@ -19,6 +19,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { DatePicker } from '@ionic-native/date-picker/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
+import { Globalization} from '@ionic-native/globalization/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -41,6 +42,7 @@ import { HTTP } from '@ionic-native/http/ngx';
     GoogleAnalytics,
     NativeStorageService,
     DatePicker,
+    Globalization,
     HTTP,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

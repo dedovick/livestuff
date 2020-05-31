@@ -7,7 +7,8 @@
   </div>
   <ion-card-header>
     <ion-card-title style="font-family: Muli-SemiBold; color: #000000;">{{event.artista}}</ion-card-title>
-    <ion-card-subtitle style="font-family: Muli-SemiBold; color: #e15f93;">{{event.data.substring(8,10)}} de {{getMonth(event.data.substring(5,7))}} às {{event.time}}h</ion-card-subtitle>
+    <!--<ion-card-subtitle style="font-family: Muli-SemiBold; color: #e15f93;">{{event.data.substring(8,10)}} de {{getMonth(event.data.substring(5,7))}} às {{event.time}}h</ion-card-subtitle>-->
+    <ion-card-subtitle style="font-family: Muli-SemiBold; color: #e15f93;">{{moment(date).format('ddd')}} - {{date.getDate()}} de {{moment(date).format('MMMM')}} às {{event.hora}}h</ion-card-subtitle>
   </ion-card-header>
   <ion-card-content>
     <ion-icon name="information-circle"></ion-icon>

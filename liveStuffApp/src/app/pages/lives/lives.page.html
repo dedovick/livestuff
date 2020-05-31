@@ -64,7 +64,6 @@
     (searchValue != '' && (event.artista.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 &&
                            event.type.toLowerCase().indexOf(searchValue.toLowerCase()) === -1 &&
                            event.title.toLowerCase().indexOf(searchValue.toLowerCase()) === -1)
-    ) ||
-    (selectedComponent.url === 'salvos' && dataStorage.schedule.indexOf(event.id) < 0)"></app-live-card>
+    )"></app-live-card>
   </div>
 </ion-content>

@@ -5,6 +5,7 @@ import { CategoryService } from 'src/app/service/category.service';
 import { NativeStorageService } from 'src/app/service/native-storage.service';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-live-card',
@@ -18,38 +19,48 @@ export class LiveCardComponent implements OnInit {
   dataStorage = {
     schedule: []
   };
-
+  date: any;
+  moment: any = moment;
   constructor( public plt: Platform, private socialSharing: SocialSharing, private categoryService: CategoryService, 
-               private localNotifications: LocalNotifications, private dialogs: Dialogs, 
+               private localNotifications: LocalNotifications, private dialogs: Dialogs,
                private nativeStorageService: NativeStorageService) {
-                 this.dataStorage = this.nativeStorageService.getdataStorage();
-                /*this.nativeStorage.getItem('dataStorage')
-                .then(
-                  data => this.dataStorage = data,
-                  error => console.error(error)
-                );*/
               }
   monthList = {
-    '01': 'Janeiro',
-    '02': 'Fevereiro',
-    '03': 'Março',
-    '04': 'Abril',
-    '05': 'Maio',
-    '06': 'Junho',
-    '07': 'Julho',
-    '08': 'Agosto',
-    '09': 'Setembro',
-    '10': 'Outubro',
-    '11': 'Novembro',
-    '12': 'Dezembro'
+    0: 'Janeiro',
+    1: 'Fevereiro',
+    2: 'Março',
+    3: 'Abril',
+    4: 'Maio',
+    5: 'Junho',
+    6: 'Julho',
+    7: 'Agosto',
+    8: 'Setembro',
+    9: 'Outubro',
+    10: 'Novembro',
+    11: 'Dezembro'
+  };
+  weekdayList = {
+    0: 'DOM',
+    1: 'SEG',
+    2: 'TER',
+    3: 'QUA',
+    4: 'QUI',
+    5: 'SEX',
+    6: 'SAB'
   };
 
   ngOnInit() {
     this.categoryService.addSubCategory(this.event.type);
+    this.dataStorage = this.nativeStorageService.getdataStorage();
+    this.date = new Date(this.event.dataHora);
   }
 
   getMonth(month) {
     return this.monthList[month];
+  }
+
+  getWeekday(day) {
+    return this.weekdayList[day];
   }
 
   openUrl(event) {
@@ -58,30 +69,31 @@ export class LiveCardComponent implements OnInit {
 
   sendShare(event) {
     this.socialSharing.share(this.message + event.artista + ' em', event.title, null, event.url);
-    /*if (event.videoId && event.videoId !== '') {
-      this.socialSharing.share(this.message + event.artista, event.title, null, this.videoUrl + event.videoId);
-    } else {
-      this.socialSharing.share(this.message + event.artista, event.title, null, this.youtubeUrl + event.idYoutube);
-    }*/
   }
 
   sheduleEvent(event) {
-    const data = new Date(Number(event.data.substring(0, 4)), Number(event.data.substring(5, 7)) - 1,
-      Number(event.data.substring(8, 10)), 9, 0, 0, 0);
+    const data = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate(), 9, 0, 0, 0);
 
     // Schedule delayed notification
     this.localNotifications.schedule({
-      text: 'É hoje! Show de ' + event.artista + ' às ' + event.time,
+      text: 'É hoje! Live de ' + event.artista + ' às ' + event.time,
       trigger: {at: new Date(data.getTime())},
       // trigger: {at: new Date(new Date().getTime() + 3600)},
       led: 'FF0000',
       sound: null
     });
 
+    // Schedule delayed notification
+    this.localNotifications.schedule({
+      text: 'Live de ' + event.artista + ' está começando agora!',
+      trigger: {at: this.date.getTime()},
+      led: 'FF0000',
+      sound: null
+    });
+
     this.nativeStorageService.addDataStorage(event.id);
 
-    this.dialogs.alert('Evento agendado! Você receberá uma notificação no dia ' + event.data.substring(8, 10) +
-     '-' + event.data.substring(5, 7) + '!', 'Agenda')
+    this.dialogs.alert('Evento agendado! Você receberá uma notificação no dia da live!', 'Agenda')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
   }

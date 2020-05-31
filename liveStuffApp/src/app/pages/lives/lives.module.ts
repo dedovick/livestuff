@@ -17,6 +17,9 @@ import { LivesPage } from './lives.page';
     IonicModule,
     LivesPageRoutingModule
   ],
+  exports: [
+    LivesPage
+  ],
   declarations: [LivesPage, LiveCardComponent]
 })
 export class LivesPageModule {}
