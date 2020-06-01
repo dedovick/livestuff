@@ -278,7 +278,7 @@ router.get('/events', (req, res) => {
 	var category = req.query.cat;
 	var filter = {};
 	if(category){
-		filter["categorias.nome"] = category;
+		filter["categorias.url"] = category;
 	}
 	
 	var dateFilter = moment().tz(timezone);
@@ -315,7 +315,7 @@ router.get('/events/:data', (req, res) => {
 	var filter = {};
 	var category = req.query.cat;
 	if(category){
-		filter["categorias.nome"] = category;
+		filter["categorias.url"] = category;
 	}
 	
 	var dateFilter = moment.tz(dataFiltro, 'YYYY-MM-DD', true, timezone);
