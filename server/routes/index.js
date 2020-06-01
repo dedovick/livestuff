@@ -152,7 +152,7 @@ router.get('/subcategorias/cadastro', authenticationMiddleware(), function(req, 
 });
 
 router.get('/categories', function(req, res) {
-	getSubCategorias(function (e, docs) {
+	getCategorias(function (e, docs) {
 		res.json(docs);
 		res.end();
 	});
