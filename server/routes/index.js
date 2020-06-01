@@ -159,6 +159,13 @@ router.get('/categories', function(req, res) {
 })
 
 
+router.get('/subcategorias', function(req, res) {
+	getSubCategorias(function (e, docs) {
+		res.json(docs);
+		res.end();
+	});
+})
+
 router.get('/subcategorias/:idCategoria', function(req, res) {
 	getSubCategorias(function (e, docs) {
 		res.json(docs);
