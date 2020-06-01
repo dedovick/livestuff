@@ -155,11 +155,11 @@ router.get('/categories', function(req, res) {
 	getSubCategorias(function (e, docs) {
 		res.json(docs);
 		res.end();
-	},{"categoria.nome": "Música"});
+	});
 })
 
 
-router.get('/subcategorias', function(req, res) {
+router.get('/subcategories', function(req, res) {
 	getSubCategorias(function (e, docs) {
 		res.json(docs);
 		res.end();
