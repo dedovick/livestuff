@@ -116,10 +116,11 @@ router.post('/addCategoria', authenticationMiddleware(), function (req, res) {
     var db = require("../db");
     var nomeCategoria = req.body.nome;
     var ordemCategoria = req.body.ordem;
-	var iconCategoria = req.body.imageIcon;
+	var iconCategoria = req.body.icon;
+	var urlCategoria = req.body.url;
  
     var Categorias = db.Mongoose.model('categorias', db.Categoria, 'categorias');
-    var categoria = new Categorias({ nome: nomeCategoria, ordem: ordemCategoria, imageIcon: iconCategoria });
+    var categoria = new Categorias({ nome: nomeCategoria, ordem: ordemCategoria, icon: iconCategoria, url: urlCategoria });
     categoria.save(function (err) {
         if (err) {
             console.log("Error! " + err.message);

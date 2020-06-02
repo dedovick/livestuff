@@ -10,7 +10,7 @@ var userSchema = new mongoose.Schema({
 var categorySchema = new mongoose.Schema({
     nome: String,
     ordem: Number,
-	imageIcon: String,
+	icon: String,
 	url: String
 }, { collection: 'categorias' }
 );
