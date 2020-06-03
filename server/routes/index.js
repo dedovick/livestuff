@@ -32,6 +32,50 @@ var getCategorias = function(callback, filter){
    Categorias.find(filter).lean().exec(callback);
 };
 
+var getCategoriasComEvento = function(callback, timezone){
+   //Exclui categoria destaque
+   if(!timezone){
+      timezone = "America/Sao_Paulo";
+   }
+   var dateFilter = moment().tz(timezone);
+   if(dateFilter.hours() <= 6){
+   	dateFilter.subtract(1, 'days');
+   }
+   var filter = {};
+   const today = new Date(dateFilter.startOf('day').format());
+   filter.dataHora = {
+   	$gte: today
+   };
+   var db = require("../db");
+   var Categorias = db.Mongoose.model('categorias', db.Categoria, 'categorias');
+   Categorias.find().lean().exec(function (e, docs) {
+		var categorias = {};
+		docs.forEach(function(categoria){
+			categoria.cont = 0;
+			categorias[categoria.nome] = {categoria: categoria};
+		});
+		var Eventos = db.Mongoose.model('eventos', db.Evento, 'eventos');
+		Eventos.find(filter).sort().lean().exec(function (e2, events) {
+			events.forEach(function(ev){
+				if(ev.categorias){
+					ev.categorias.forEach(function(cat){
+						if(categorias[cat.nome]){
+							categorias[cat.nome].categoria.cont++;
+						}
+					});
+				}
+			});
+			var result = [];
+			for(var key in categorias){
+				if(categorias[key].categoria.cont > 0){
+					result.push(categorias[key].categoria);
+				}
+			}
+			callback(e, result);
+		});
+   });
+};
+
 var getSubCategorias = function(callback, filter){
    filter = filter || {};
    var db = require("../db");
@@ -153,7 +197,7 @@ router.get('/subcategorias/cadastro', authenticationMiddleware(), function(req, 
 });
 
 router.get('/categories', function(req, res) {
-	getCategorias(function (e, docs) {
+	getCategoriasComEvento(function (e, docs) {
 		res.json(docs);
 		res.end();
 	});

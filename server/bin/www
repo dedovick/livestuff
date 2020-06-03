@@ -17,13 +17,7 @@ mongoClient.connect(process.env.MONGO_CONNECTION, function(err, conn){
    var app = require('../app');
    var debug = require('debug')('server:server');
    var http = require('http');
-   var https = require('https');
-   var fs = require('fs');
-   
-   var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
-   var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
 
-   var credentials = {key: privateKey, cert: certificate};
    
    var port = normalizePort(process.env.PORT || '3000');
    app.set('port', port);
@@ -33,7 +27,6 @@ mongoClient.connect(process.env.MONGO_CONNECTION, function(err, conn){
     */
    
    var server = http.createServer(app);
-   var httpsServer = https.createServer(credentials, app);
    
    /**
     * Listen on provided port, on all network interfaces.
@@ -44,9 +37,6 @@ mongoClient.connect(process.env.MONGO_CONNECTION, function(err, conn){
    server.on('error', onError);
    server.on('listening', onListening);
    
-   httpsServer.listen(8443);
-   httpsServer.on('error', onError);
-   httpsServer.on('listening', onListening);
    
    /**
     * Normalize a port into a number, string, or false.
