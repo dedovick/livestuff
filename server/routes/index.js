@@ -52,7 +52,8 @@ var getCategoriasComEvento = function(callback, timezone){
 		var categorias = {};
 		docs.forEach(function(categoria){
 			categoria.cont = 0;
-			categoria.title = categoria.nome
+			categoria.title = categoria.nome;
+			delete categoria.nome;
 			categorias[categoria.url] = {categoria: categoria};
 		});
 		var Eventos = db.Mongoose.model('eventos', db.Evento, 'eventos');
