@@ -52,15 +52,16 @@ var getCategoriasComEvento = function(callback, timezone){
 		var categorias = {};
 		docs.forEach(function(categoria){
 			categoria.cont = 0;
-			categorias[categoria.nome] = {categoria: categoria};
+			categoria.title = categoria.nome
+			categorias[categoria.url] = {categoria: categoria};
 		});
 		var Eventos = db.Mongoose.model('eventos', db.Evento, 'eventos');
 		Eventos.find(filter).sort().lean().exec(function (e2, events) {
 			events.forEach(function(ev){
 				if(ev.categorias){
 					ev.categorias.forEach(function(cat){
-						if(categorias[cat.nome]){
-							categorias[cat.nome].categoria.cont++;
+						if(categorias[cat.url]){
+							categorias[cat.url].categoria.cont++;
 						}
 					});
 				}
