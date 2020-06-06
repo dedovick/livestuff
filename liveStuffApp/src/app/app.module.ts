@@ -18,7 +18,6 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { DatePicker } from '@ionic-native/date-picker/ngx';
-import { HTTP } from '@ionic-native/http/ngx';
 import { Globalization} from '@ionic-native/globalization/ngx';
 // import { AdMobPro } from '@ionic-native/admob-pro/ngx';
 
@@ -44,7 +43,6 @@ import { Globalization} from '@ionic-native/globalization/ngx';
     NativeStorageService,
     DatePicker,
     Globalization,
-    HTTP,
     // AdMobPro,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

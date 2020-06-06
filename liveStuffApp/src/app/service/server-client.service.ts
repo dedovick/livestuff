@@ -2,7 +2,6 @@ import { NativeStorageService } from 'src/app/service/native-storage.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
-import { HTTP } from '@ionic-native/http/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,7 @@ export class ServerClientService {
   // serverUrl = 'https://34.67.130.241:8443/';
   tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  constructor(private http: HttpClient, private dialogs: Dialogs, private nativeStorage: NativeStorageService, private httpngx: HTTP) {
+  constructor(private http: HttpClient, private dialogs: Dialogs, private nativeStorage: NativeStorageService) {
 
   }
 
