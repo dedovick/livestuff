@@ -17,6 +17,7 @@ mongoClient.connect(process.env.MONGO_CONNECTION, function(err, conn){
    var app = require('../app');
    var debug = require('debug')('server:server');
    var http = require('http');
+
    
    var port = normalizePort(process.env.PORT || '3000');
    app.set('port', port);
@@ -32,8 +33,10 @@ mongoClient.connect(process.env.MONGO_CONNECTION, function(err, conn){
     */
    
    server.listen(port);
+     
    server.on('error', onError);
    server.on('listening', onListening);
+   
    
    /**
     * Normalize a port into a number, string, or false.

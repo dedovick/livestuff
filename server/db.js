@@ -10,7 +10,8 @@ var userSchema = new mongoose.Schema({
 var categorySchema = new mongoose.Schema({
     nome: String,
     ordem: Number,
-	imageIcon: String
+	icon: String,
+	url: String
 }, { collection: 'categorias' }
 );
 
@@ -35,6 +36,7 @@ var eventSchema = new mongoose.Schema({
     titulo: String,
     canais: [channelSchema],
 	dataHora: Date,
+	categorias: [categorySchema],
 	subcategorias: [subCategorySchema],
 	largeImage: String,
 	status: String,

@@ -17,11 +17,18 @@
 				<%})%>
 				</select>
 			</p>
+			<p>Destaque
+				<input type="checkbox" id="destaque" name="destaque"></input>
+			</p>
 			<p>Categoria:
-				<select id="categoria" name="subcategoria">
-				<% listaSubCategorias.forEach(function(subcategoria){ %>
-					<option value="<%=JSON.stringify(subcategoria) %>"> <%= subcategoria.nome %> </option>
+				<select id="categoria" name="categoria" onchange="changeCat()">
+				<% listaCategorias.forEach(function(categoria){ %>
+					<option value="<%=JSON.stringify(categoria) %>"> <%= categoria.nome %> </option>
 				<%})%>
+				</select>
+			</p>
+			<p>Subcategoria:
+				<select id="subcategoria" name="subcategoria" onchange="changeSub()">
 				</select>
 			</p>
 			<p>Data/Hora:<input type="datetime-local" name="datetime" /></p>
@@ -31,5 +38,43 @@
 			<p><input type="submit" value="Salvar" /></p>
 		</form>
 	</div>
+	 <script type='text/javascript'>
+	 
+	var listaSubCategorias = <%-JSON.stringify(listaSubCategorias)%>;
+	var listaCategorias = <%-JSON.stringify(listaCategorias)%>;
+	
+	function changeCat() {
+		var selected = JSON.parse(document.getElementById("categoria").value);
+		var elementCat = document.getElementById("subcategoria");
+		var length = elementCat.options.length;
+		for(var i = 0; i<length; i++){
+			elementCat.options.remove(0);
+		}
+		listaSubCategorias.forEach(function(sub){
+			if(sub.categoria._id === selected._id){
+				var c = document.createElement("option");
+				c.text = sub.nome;
+				c.value = JSON.stringify(sub);
+				elementCat.options.add(c);
+			}
+		});
+	}
+	
+	function changeSub(){
+		var selected = JSON.parse(document.getElementById("subcategoria").value);
+		console.log("Mudou sub", selected)
+	}
+	
+	(function(){
+			
+		document.getElementById("categoria").options.remove(0);
+		var catDestaque = listaCategorias[0];
+		console.log(catDestaque);
+		document.getElementById("destaque").value = JSON.stringify(catDestaque);
+		changeCat();
+		
+	})();
+	
+  </script>
 </body>
 </html>
