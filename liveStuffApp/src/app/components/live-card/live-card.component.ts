@@ -6,6 +6,8 @@ import { NativeStorageService } from 'src/app/service/native-storage.service';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import * as moment from 'moment';
+import { GoogleAnalytics } from '@ionic-native/google-analytics/ngx';
+// import { AdMobPro } from '@ionic-native/admob-pro/ngx';
 
 @Component({
   selector: 'app-live-card',
@@ -14,16 +16,16 @@ import * as moment from 'moment';
 })
 export class LiveCardComponent implements OnInit {
   @Input() event: any;
-  @Input() todaystring: any;
+  @Input() today: Date;
   message = 'Live compartilhada pelo APP LiveStuff. Assista a live de ';
   dataStorage = {
     schedule: []
   };
   date: any;
   moment: any = moment;
-  constructor( public plt: Platform, private socialSharing: SocialSharing, private categoryService: CategoryService, 
-               private localNotifications: LocalNotifications, private dialogs: Dialogs,
-               private nativeStorageService: NativeStorageService) {
+  constructor( public plt: Platform, private socialSharing: SocialSharing, private categoryService: CategoryService,
+               private localNotifications: LocalNotifications, private dialogs: Dialogs, private platform: Platform,
+               private nativeStorageService: NativeStorageService, private ga: GoogleAnalytics) {
               }
   monthList = {
     0: 'Janeiro',
@@ -64,14 +66,18 @@ export class LiveCardComponent implements OnInit {
   }
 
   openUrl(event) {
+    this.reward();
     window.open(event.url, '_system');
   }
 
   sendShare(event) {
+    this.ga.trackEvent('shareEvent', 'eventShared', 'Event: ' + event.artista);
     this.socialSharing.share(this.message + event.artista + ' em', event.title, null, event.url);
   }
 
   sheduleEvent(event) {
+    this.ga.trackEvent('scheduleEvent', 'EventScheduled', 'event: ' + event.artista);
+    this.reward();
     const data = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate(), 9, 0, 0, 0);
 
     // Schedule delayed notification
@@ -99,10 +105,35 @@ export class LiveCardComponent implements OnInit {
   }
 
   removeEvent(event) {
+    this.ga.trackEvent('scheduleEvent', 'EventRemoved', 'event: ' + event.artista);
     this.nativeStorageService.addDataStorage(event.id);
 
     this.dialogs.alert('Evento removido!', 'Agenda')
       .then(() => console.log('Dialog dismissed'))
       .catch(e => console.log('Error displaying dialog', e));
+  }
+
+  ionViewDidLoad() {
+    /*this.admob.onAdDismiss()
+      .subscribe(() => { console.log('User dismissed ad'); });*/
+  }
+
+  reward() {
+    /*let adId;
+    if (this.platform.is('android')) {
+      adId = 'ca-app-pub-9511742733388692/8645831223';
+    } else if (this.platform.is('ios')) {
+      adId = 'ca-app-pub-9511742733388692/8645831223';
+    }
+    this.admob.prepareRewardVideoAd({
+      adId: adId,
+      isTesting: true // remove in production 
+    })
+      .then(() => {
+        this.admob.showRewardVideoAd();
+      })
+      .catch((err) => {
+        console.log(err);
+      });*/
   }
 }

@@ -32,7 +32,8 @@ export class LivesPage implements OnInit {
   messageApp = 'Baixe o APP LiveStuff em ';
   appUrl = 'bit.ly/LiveStuffApp';
 
-  public catList = [
+  public catList: any;
+  /*public catList = [
     {
       title: 'Destaques',
       url: 'destaques',
@@ -73,9 +74,10 @@ export class LivesPage implements OnInit {
       url: 'salvos',
       icon: 'bookmark'
     }
-  ];
+  ];*/
   option: GlobalizationOptions;
   moment: any = moment;
+  aux = '';
 
   constructor(private activatedRoute: ActivatedRoute, private serverClientService: ServerClientService,
               private categoryService: CategoryService, private changeDetectionRef: ChangeDetectorRef, private globalization: Globalization,
@@ -85,6 +87,7 @@ export class LivesPage implements OnInit {
                 const year = this.today.getFullYear();
                 const month = this.today.getMonth() + 1;
                 const date = this.today.getDate();
+                console.log('AAAAAAAAAAAAAAAAAAA: ' + this.today);
 
                 if (month > 9) {
                   this.todayString = year + '-' + month;
@@ -102,29 +105,39 @@ export class LivesPage implements OnInit {
 
     this.dataStorage = this.nativeStorageService.getdataStorage();
     // this.selectedComponent = this.activatedRoute.snapshot.paramMap.get('id');
-    this.selectedComponent = this.catList[0];
-    moment.locale('pt-br');
-    
+    this.selectedComponent = {
+      title: 'Salvos',
+      url: 'salvos',
+      icon: 'bookmark'
+    };
+
     this.globalization.getPreferredLanguage()
     .then(res => moment.locale(res.value))
-    .catch(e => console.log(e));
+    .catch(e => moment.locale('pt-br'));
 
     this.categorias = this.categoryService.getSubCategorys();
 
     this.categoryService.clearData();
-    const resLives = this.serverClientService.getEvents(undefined);
-    resLives.subscribe(data => {
-      this.events = data;
-      this.loadingControllerService.dismiss();
-      this.changeDetectionRef.detectChanges();
+    const resCat = this.serverClientService.getCategories();
+    resCat.subscribe(data => {
+      this.catList = data;
+      this.catList.push(
+        {
+          title: 'Salvos',
+          url: 'salvos',
+          icon: 'bookmark'
+        }
+      );
+      this.selectedComponent = this.catList[0];
+      const resLives = this.serverClientService.getEvents(undefined, this.selectedComponent.url);
+      resLives.subscribe(
+        dataEvents => {
+          this.events = dataEvents;
+          this.loadingControllerService.dismiss();
+          this.changeDetectionRef.detectChanges();
 
-    },
-    err => {
-      this.dialogs.alert('Error:', err, 'Erro')
-        .then(() => console.log('Dialog dismissed'))
-        .catch(e => console.log('Error displaying dialog', e));
-    },
-    () => console.log('HTTP request completed.'));
+        });
+    });
   }
 
   selectCategory(category) {
@@ -152,7 +165,7 @@ export class LivesPage implements OnInit {
       this.loadingControllerService.present();
       this.categoryService.clearData();
       this.selectedData = undefined;
-      const res = this.serverClientService.getEvents(undefined);
+      const res = this.serverClientService.getEvents(undefined, this.selectedComponent.url);
       res.subscribe(data => {
         this.events = data;
         this.loadingControllerService.dismiss();
@@ -167,7 +180,7 @@ export class LivesPage implements OnInit {
       this.loadingControllerService.present();
       this.categoryService.clearData();
       this.selectedCat = '';
-      const res = this.serverClientService.getEvents(this.selectedData.substring(0, 10));
+      const res = this.serverClientService.getEvents(this.selectedData.substring(0, 10), this.selectedComponent.url);
       res.subscribe(data => {
         console.log(data);
         this.events = data;
@@ -185,6 +198,7 @@ export class LivesPage implements OnInit {
     }).then(
       date => {
         console.log('Got date: ', date);
+        this.ga.trackEvent('selectData', 'dataSelected', 'Data: ' + date.getDate + '/' + date.getMonth + '/' + date.getFullYear);
 
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
@@ -222,6 +236,9 @@ export class LivesPage implements OnInit {
 
   selectCatBar(cat) {
     this.selectedComponent = cat;
+    this.showData = 'DATA';
+    this.loadingControllerService.present();
+    this.categoryService.clearData();
     this.selectedData = undefined;
     this.selectedCat = '';
 
@@ -240,7 +257,7 @@ export class LivesPage implements OnInit {
         this.changeDetectionRef.detectChanges();
       });
     } else {
-      const resLives = this.serverClientService.getEvents(undefined);
+      const resLives = this.serverClientService.getEvents(undefined, this.selectedComponent.url);
       resLives.subscribe(data => {
         this.events = data;
         this.loadingControllerService.dismiss();
@@ -251,6 +268,7 @@ export class LivesPage implements OnInit {
   }
 
   shareApp() {
+    this.ga.trackEvent('shareAPP', 'shareAPP', 'Share');
     this.socialSharing.share(this.messageApp, 'LiveStuff APP' , null, this.appUrl);
   }
 }

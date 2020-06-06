@@ -9,7 +9,7 @@ export class CategoryService {
   subCategorys = [];
 
   constructor(private serverClientService: ServerClientService) {
-    const resCat = this.serverClientService.getCategories();
+    const resCat = this.serverClientService.getSubCategories();
     resCat.subscribe(data => {
       const dataAux = data as Array<any>;
       dataAux.forEach(element => {

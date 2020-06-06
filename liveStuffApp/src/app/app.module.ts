@@ -20,6 +20,7 @@ import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { DatePicker } from '@ionic-native/date-picker/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Globalization} from '@ionic-native/globalization/ngx';
+// import { AdMobPro } from '@ionic-native/admob-pro/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -44,6 +45,7 @@ import { Globalization} from '@ionic-native/globalization/ngx';
     DatePicker,
     Globalization,
     HTTP,
+    // AdMobPro,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

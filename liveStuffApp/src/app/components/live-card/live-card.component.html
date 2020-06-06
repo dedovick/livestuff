@@ -15,20 +15,20 @@
     <ion-label style="font-size: 12sp; font-family: Muli-Light;"> {{event.title}}</ion-label>
     <ion-list lines="none">
       <ion-item>
-        <ion-button *ngIf="event.data === todaystring" class="card" slot="start" (click)="openUrl(event)"
-          style="--border-radius: 20px; width: 60%; --background: linear-gradient(to bottom right, #eb0000 0%, #f094ff 100%) !important;">
+        <ion-button *ngIf="date <= today" class="card" slot="start" (click)="openUrl(event)"
+          style="--border-radius: 20px; width: 60%; --background: linear-gradient(to bottom right, #c94b4b 0%, #4b134f 100%) !important;">
           <ion-label color="white">Assista agora</ion-label>
         </ion-button>
-        <ion-button *ngIf="event.data != todaystring && dataStorage.schedule.indexOf(event.id) < 0" class="card" slot="start" (click)="sheduleEvent(event)"
-          style="--border-radius: 20px; width: 60%; --background: linear-gradient(to bottom right, #eb0000 0%, #f094ff 100%) !important;">
+        <ion-button *ngIf="date > today && dataStorage.schedule.indexOf(event.id) < 0" class="card" slot="start" (click)="sheduleEvent(event)"
+          style="--border-radius: 20px; width: 60%; --background: linear-gradient(to bottom right, #c94b4b 0%, #4b134f 100%) !important;">
           <ion-label color="white">Agendar evento</ion-label>
         </ion-button>
-        <ion-button *ngIf="event.data != todaystring && dataStorage.schedule.indexOf(event.id) >= 0" class="card" slot="start"
+        <ion-button *ngIf="date > today && dataStorage.schedule.indexOf(event.id) >= 0" class="card" slot="start"
           style="--border-radius: 20px; width: 60%; --background: thistle" (click)="removeEvent(event)">
           <ion-label color="white">Evento agendado</ion-label>
         </ion-button>
         <ion-button class="card" slot="end" (click)="sendShare(event)" 
-          style="width: 40px; --border-radius: 20px; --background: linear-gradient(to bottom right, #eb0000 0%, #f094ff 100%) !important;">
+          style="width: 40px; --border-radius: 20px; --background: linear-gradient(to bottom right, #c94b4b 0%, #4b134f 100%) !important;">
           <img src="assets/icon/drawable/share_24_px.svg">
         </ion-button>
       </ion-item>
