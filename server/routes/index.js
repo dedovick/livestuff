@@ -367,11 +367,18 @@ router.get('/events', (req, res) => {
 // GET /events 
 router.post('/eventsById', (req, res) => {
 	var filter = filterFromToday(req.query.tz);
-	filter["_id"] = req.body.listaIds;
-	getEventos(function (e, docs) {
-         res.json(docs);
-		 res.end();
-	}, undefined, filter);
+	var listaIds = req.body.listaIds;
+	if(!listaIds || listaIds.length == 0){
+		res.json([]);
+		res.end();
+	}
+	else{
+		filter["_id"] = listaIds;
+		getEventos(function (e, docs) {
+			 res.json(docs);
+			 res.end();
+		}, undefined, filter);
+	}
 });
 
 // GET /events by date
