@@ -284,6 +284,9 @@ router.post('/addCanal', authenticationMiddleware(), function (req, res) {
 	if(req.body.idFacebook){
 		canalAdd.idFacebook = req.body.idFacebook;
 	}
+	if(req.body.idInstagram){
+		canalAdd.idInstagram = req.body.idInstagram;
+	}
 	if(req.body.idVimeo){
 		canalAdd.idVimeo = req.body.idVimeo;
 	}
@@ -323,18 +326,14 @@ router.get('/channels/events/:idyoutube', (req, res) => {
 	{"canais.idYoutube": req.params.idyoutube});
 });
 
-// GET /events 
-router.get('/events', (req, res) => {
-	var timezone = req.query.tz;
+var filterFromToday = function(timezone){
+	
 	if(!timezone){
 		timezone = "America/Sao_Paulo";
 	}
-	var category = req.query.cat;
-	var filter = {};
-	if(category){
-		filter["categorias.url"] = category;
-	}
 	
+	var filter = {};
+
 	var dateFilter = moment().tz(timezone);
 	if(dateFilter.hours() <= 6){
 		dateFilter.subtract(1, 'days');
@@ -343,6 +342,20 @@ router.get('/events', (req, res) => {
 	filter.dataHora = {
 		$gte: today
 	};
+	return filter;
+}
+// GET /events 
+router.get('/events', (req, res) => {
+	var timezone = req.query.tz;
+	if(!timezone){
+		timezone = "America/Sao_Paulo";
+	}
+	var category = req.query.cat;
+	var filter = filterFromToday(timezone);
+	if(category){
+		filter["categorias.url"] = category;
+	}
+	
 	getEventos(function (e, docs) {
         res.json(docs);
 		res.end();
@@ -353,10 +366,12 @@ router.get('/events', (req, res) => {
 
 // GET /events 
 router.post('/eventsById', (req, res) => {
+	var filter = filterFromToday(req.query.tz);
+	filter["_id"] = req.body.listaIds;
 	getEventos(function (e, docs) {
          res.json(docs);
 		 res.end();
-	}, undefined, { _id: req.body.listaIds});
+	}, undefined, filter);
 });
 
 // GET /events by date

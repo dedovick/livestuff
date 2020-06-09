@@ -27,6 +27,7 @@ var channelSchema = new mongoose.Schema({
 	idFacebook: String,
 	idVimeo: String,
 	idTwitch: String,
+	idInstagram: String,
 	status: Number,
     categoria: categorySchema
 }, { collection: 'canais' }
