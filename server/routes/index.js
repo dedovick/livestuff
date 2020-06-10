@@ -2,6 +2,7 @@ var express = require('express');
 var moment = require('moment-timezone');
 var router = express.Router();
 var passport = require('passport');
+var ObjectId = require('mongodb').ObjectID;
  
 const server_url = 'http://34.67.130.241:3000/';
 
@@ -104,6 +105,7 @@ var getEventos = function(callback, timezone, filter, sort){
 	Eventos.find(filter).sort(sort).lean().exec(function (e, docs) {
 		var result = [];
 		var resultTmp = {}, dataTemp;
+		if(docs && docs.length > 0){
 		docs.forEach(function(evento){
 			resultTmp = {
 				id: evento._id,
@@ -121,6 +123,7 @@ var getEventos = function(callback, timezone, filter, sort){
 			resultTmp.hora = dataTemp.format('HH:mm');
 			result.push(resultTmp);
 		});
+		}
 		callback(e, result);
 	});
 	
@@ -366,14 +369,25 @@ router.get('/events', (req, res) => {
 
 // GET /events 
 router.post('/eventsById', (req, res) => {
+
+
 	var filter = filterFromToday(req.query.tz);
 	var listaIds = req.body.listaIds;
 	if(!listaIds || listaIds.length == 0){
+
 		res.json([]);
 		res.end();
 	}
 	else{
-		filter["_id"] = listaIds;
+		
+		filter["_id"] = listaIds.map(function(e){
+			try{ 
+                	   return ObjectId(e.toString());
+			} catch(error){
+			   return undefined; 
+			}
+            	});
+	
 		getEventos(function (e, docs) {
 			 res.json(docs);
 			 res.end();
