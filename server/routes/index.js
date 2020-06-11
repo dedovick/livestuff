@@ -3,6 +3,7 @@ var moment = require('moment-timezone');
 var router = express.Router();
 var passport = require('passport');
 var ObjectId = require('mongodb').ObjectID;
+const bcrypt = require('bcryptjs');
  
 const server_url = 'http://34.67.130.241:3000/';
 
@@ -447,10 +448,40 @@ router.post('/eventos/desativar/:idEvento', authenticationMiddleware(), function
 	
 });
 
+var findUser = function(id, callback){ 
+	var db = require("../db");
+	var Usuarios = db.Mongoose.model('usuarios', db.Usuario, 'usuarios');
+	Usuarios.find(new ObjectId(id)).lean().exec(callback);
+}
 
-var addEvento = function(req, res, callback){
+router.get('/user/:id', authenticationMiddleware(), function(req, res, next) {
+  var id = req.params.id;
+  findUser(id, function(err, usr){
+	console.log(usr);
+	res.render('editUser', { 
+		title: 'Editar usuario',
+		user: {
+			id: id,
+			username: usr[0].username,
+			email: usr[0].email
+		}
+	});
+  });
+});
 
-};
+router.post('/editUser/:id', authenticationMiddleware(), function(req, res, next) {
+		var password = req.body.password;
+		var id = req.params.id;
+		console.log(id);
+		findUser(id, function(err, docs){
+			var user = docs[0];
+			bcrypt.compare(password, user.senha, (err, isValid) => {
+				if (err || !isValid) { return done(null, false) }
+				return done(null, user)
+			});
+		});
+});
+
 /* POST Adiciona categoria no banco */
 router.post('/addEvento', authenticationMiddleware(), function (req, res) {
  
@@ -463,14 +494,16 @@ router.post('/addEvento', authenticationMiddleware(), function (req, res) {
 		categorias.push(JSON.parse(req.body.destaque));
 	}
 	var subcategorias = [];
-	subcategorias.push(JSON.parse(req.body.subcategoria));
+	subcategorias.push(JSON.parse(req.body.subcategoria));;
 	var eventoAdd = {
 		titulo: req.body.nome,
 		canais: canais,
 		categorias: categorias,
 		subcategorias: subcategorias,
 		status: 0,
-		dataHora: req.body.datetime
+		dataHora: moment.tz(req.body.datetime, 'America/Sao_Paulo'),
+		url: req.body.url,
+		largeimage: req.body.largeImage
 	};
     
 	var Eventos = db.Mongoose.model('eventos', db.Evento, 'eventos');

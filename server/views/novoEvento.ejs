@@ -8,6 +8,7 @@
 	<%include indice.ejs %>
 	<div id="conteudo">
 		<h1><%= title %></h1>
+		<div style="float:left">
 		<form action="/addEvento" method="post">
 			<p>Nome:<input type="text" name="nome" /></p>
 			<p>Canal:
@@ -32,11 +33,15 @@
 				</select>
 			</p>
 			<p>Data/Hora:<input type="datetime-local" name="datetime" /></p>
-			<p>Thumb:<input type="text" name="largeImage" /></p>
-			<p>Video ID:<input type="text" name="videoId" /></p>
-			<p>URL:<input type="text" name="url" /></p>
+			<p>Video ID:<input type="text" name="videoId" id="videoId" onchange="videoIdLostFocus()" /></p>
+			<p>Thumb:<input type="text" name="largeImage" id="largeImage" onchange="loadImage()"/></p>
+			<p>URL:<input type="text" name="url" id="url"/></p>
 			<p><input type="submit" value="Salvar" /></p>
 		</form>
+		</div>
+		<div style="float:right">
+			<img src="" id="thumb" width="300">
+		</div>
 	</div>
 	 <script type='text/javascript'>
 	 
@@ -58,6 +63,20 @@
 				elementCat.options.add(c);
 			}
 		});
+	}
+	
+	function loadImage(){
+		var urlImage = document.getElementById("largeImage").value;
+		document.getElementById("thumb").src = urlImage;
+	}
+	
+	function videoIdLostFocus(){
+		var videoId = document.getElementById("videoId").value;
+		if(videoId !== ""){
+			document.getElementById("largeImage").value = "https://i.ytimg.com/vi/" + videoId + "/maxresdefault_live.jpg";
+			document.getElementById("url").value = "https://www.youtube.com/watch?v=" + videoId;
+			loadImage();
+		}
 	}
 	
 	function changeSub(){
