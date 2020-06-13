@@ -27,6 +27,7 @@ var channelSchema = new mongoose.Schema({
 	idFacebook: String,
 	idVimeo: String,
 	idTwitch: String,
+	idInstagram: String,
 	status: Number,
     categoria: categorySchema
 }, { collection: 'canais' }
@@ -38,7 +39,7 @@ var eventSchema = new mongoose.Schema({
 	dataHora: Date,
 	categorias: [categorySchema],
 	subcategorias: [subCategorySchema],
-	largeImage: String,
+	largeimage: String,
 	status: String,
 	videoId: String,
 	url: String
@@ -50,5 +51,6 @@ module.exports = {
 	Categoria: categorySchema,
 	SubCategoria: subCategorySchema,
 	Canal: channelSchema,
-	Evento: eventSchema
+	Evento: eventSchema,
+	Usuario: userSchema
 }

@@ -2,6 +2,8 @@ var express = require('express');
 var moment = require('moment-timezone');
 var router = express.Router();
 var passport = require('passport');
+var ObjectId = require('mongodb').ObjectID;
+const bcrypt = require('bcryptjs');
  
 const server_url = 'http://34.67.130.241:3000/';
 
@@ -104,6 +106,7 @@ var getEventos = function(callback, timezone, filter, sort){
 	Eventos.find(filter).sort(sort).lean().exec(function (e, docs) {
 		var result = [];
 		var resultTmp = {}, dataTemp;
+		if(docs && docs.length > 0){
 		docs.forEach(function(evento){
 			resultTmp = {
 				id: evento._id,
@@ -121,6 +124,7 @@ var getEventos = function(callback, timezone, filter, sort){
 			resultTmp.hora = dataTemp.format('HH:mm');
 			result.push(resultTmp);
 		});
+		}
 		callback(e, result);
 	});
 	
@@ -284,6 +288,9 @@ router.post('/addCanal', authenticationMiddleware(), function (req, res) {
 	if(req.body.idFacebook){
 		canalAdd.idFacebook = req.body.idFacebook;
 	}
+	if(req.body.idInstagram){
+		canalAdd.idInstagram = req.body.idInstagram;
+	}
 	if(req.body.idVimeo){
 		canalAdd.idVimeo = req.body.idVimeo;
 	}
@@ -323,18 +330,14 @@ router.get('/channels/events/:idyoutube', (req, res) => {
 	{"canais.idYoutube": req.params.idyoutube});
 });
 
-// GET /events 
-router.get('/events', (req, res) => {
-	var timezone = req.query.tz;
+var filterFromToday = function(timezone){
+	
 	if(!timezone){
 		timezone = "America/Sao_Paulo";
 	}
-	var category = req.query.cat;
-	var filter = {};
-	if(category){
-		filter["categorias.url"] = category;
-	}
 	
+	var filter = {};
+
 	var dateFilter = moment().tz(timezone);
 	if(dateFilter.hours() <= 6){
 		dateFilter.subtract(1, 'days');
@@ -343,6 +346,20 @@ router.get('/events', (req, res) => {
 	filter.dataHora = {
 		$gte: today
 	};
+	return filter;
+}
+// GET /events 
+router.get('/events', (req, res) => {
+	var timezone = req.query.tz;
+	if(!timezone){
+		timezone = "America/Sao_Paulo";
+	}
+	var category = req.query.cat;
+	var filter = filterFromToday(timezone);
+	if(category){
+		filter["categorias.url"] = category;
+	}
+	
 	getEventos(function (e, docs) {
         res.json(docs);
 		res.end();
@@ -353,10 +370,30 @@ router.get('/events', (req, res) => {
 
 // GET /events 
 router.post('/eventsById', (req, res) => {
-	getEventos(function (e, docs) {
-         res.json(docs);
-		 res.end();
-	}, undefined, { _id: req.body.listaIds});
+
+
+	var filter = filterFromToday(req.query.tz);
+	var listaIds = req.body.listaIds;
+	if(!listaIds || listaIds.length == 0){
+
+		res.json([]);
+		res.end();
+	}
+	else{
+		
+		filter["_id"] = listaIds.map(function(e){
+			try{ 
+                	   return ObjectId(e.toString());
+			} catch(error){
+			   return undefined; 
+			}
+            	});
+	
+		getEventos(function (e, docs) {
+			 res.json(docs);
+			 res.end();
+		}, undefined, filter);
+	}
 });
 
 // GET /events by date
@@ -411,10 +448,40 @@ router.post('/eventos/desativar/:idEvento', authenticationMiddleware(), function
 	
 });
 
+var findUser = function(id, callback){ 
+	var db = require("../db");
+	var Usuarios = db.Mongoose.model('usuarios', db.Usuario, 'usuarios');
+	Usuarios.find(new ObjectId(id)).lean().exec(callback);
+}
 
-var addEvento = function(req, res, callback){
+router.get('/user/:id', authenticationMiddleware(), function(req, res, next) {
+  var id = req.params.id;
+  findUser(id, function(err, usr){
+	console.log(usr);
+	res.render('editUser', { 
+		title: 'Editar usuario',
+		user: {
+			id: id,
+			username: usr[0].username,
+			email: usr[0].email
+		}
+	});
+  });
+});
 
-};
+router.post('/editUser/:id', authenticationMiddleware(), function(req, res, next) {
+		var password = req.body.password;
+		var id = req.params.id;
+		console.log(id);
+		findUser(id, function(err, docs){
+			var user = docs[0];
+			bcrypt.compare(password, user.senha, (err, isValid) => {
+				if (err || !isValid) { return done(null, false) }
+				return done(null, user)
+			});
+		});
+});
+
 /* POST Adiciona categoria no banco */
 router.post('/addEvento', authenticationMiddleware(), function (req, res) {
  
@@ -427,14 +494,16 @@ router.post('/addEvento', authenticationMiddleware(), function (req, res) {
 		categorias.push(JSON.parse(req.body.destaque));
 	}
 	var subcategorias = [];
-	subcategorias.push(JSON.parse(req.body.subcategoria));
+	subcategorias.push(JSON.parse(req.body.subcategoria));;
 	var eventoAdd = {
 		titulo: req.body.nome,
 		canais: canais,
 		categorias: categorias,
 		subcategorias: subcategorias,
 		status: 0,
-		dataHora: req.body.datetime
+		dataHora: moment.tz(req.body.datetime, 'America/Sao_Paulo'),
+		url: req.body.url,
+		largeimage: req.body.largeImage
 	};
     
 	var Eventos = db.Mongoose.model('eventos', db.Evento, 'eventos');
