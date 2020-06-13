@@ -87,7 +87,6 @@ export class LivesPage implements OnInit {
                 const year = this.today.getFullYear();
                 const month = this.today.getMonth() + 1;
                 const date = this.today.getDate();
-                console.log('AAAAAAAAAAAAAAAAAAA: ' + this.today);
 
                 if (month > 9) {
                   this.todayString = year + '-' + month;
@@ -250,11 +249,15 @@ export class LivesPage implements OnInit {
     this.loadingControllerService.present();
 
     if (this.selectedComponent.url === 'salvos') {
+      this.events = [];
       const resLives = this.serverClientService.getEventsById();
       resLives.subscribe(data => {
+        this.updateSavedItens(data);
         this.events = data;
         this.loadingControllerService.dismiss();
         this.changeDetectionRef.detectChanges();
+      }, error => {
+        console.log('ERROR: ' + JSON.stringify(error), 'Agenda');
       });
     } else {
       const resLives = this.serverClientService.getEvents(undefined, this.selectedComponent.url);
@@ -270,5 +273,14 @@ export class LivesPage implements OnInit {
   shareApp() {
     this.ga.trackEvent('shareAPP', 'shareAPP', 'Share');
     this.socialSharing.share(this.messageApp, 'LiveStuff APP' , null, this.appUrl);
+  }
+
+  updateSavedItens(data) {
+    this.nativeStorageService.clearDataStorage();
+    data.forEach(element => {
+      if (element.id) {
+        this.nativeStorageService.addDataStorage(element.id);
+      }
+    });
   }
 }

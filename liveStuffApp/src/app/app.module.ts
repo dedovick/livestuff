@@ -19,7 +19,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { DatePicker } from '@ionic-native/date-picker/ngx';
 import { Globalization} from '@ionic-native/globalization/ngx';
-// import { AdMobPro } from '@ionic-native/admob-pro/ngx';
+import { AdMobPro } from '@ionic-native/admob-pro/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,7 +43,7 @@ import { Globalization} from '@ionic-native/globalization/ngx';
     NativeStorageService,
     DatePicker,
     Globalization,
-    // AdMobPro,
+    AdMobPro,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

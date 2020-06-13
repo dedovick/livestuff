@@ -56,6 +56,11 @@ export class NativeStorageService {
     }
   }
 
+  clearDataStorage() {
+    this.dataStorage.schedule = [];
+    this.set(this.scheduleName, this.dataStorage.schedule);
+  }
+
   public set(settingName, value) {
     return this.storage.set(`setting:${ settingName }`, value);
   }

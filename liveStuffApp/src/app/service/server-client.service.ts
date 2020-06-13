@@ -2,6 +2,7 @@ import { NativeStorageService } from 'src/app/service/native-storage.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { JsonPipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -60,13 +61,15 @@ export class ServerClientService {
 
     getEventsById() {
       const listaIds = this.nativeStorage.getdataStorage().schedule;
-      /*const listaIds = [
-        '5ec1c8d6f1c6989ffb869894',
-        '5ec1c8d6f1c6989ffb86996f'
-      ];*/
+      const selfParams = {
+        'listaIds': this.nativeStorage.getdataStorage().schedule
+      };
+      const params = new HttpParams()
+        .append('tz', this.tz)
+        .append('listaIds', JSON.stringify(this.nativeStorage.getdataStorage().schedule));
       const httpHeader = {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
       };
-      return this.http.post<any>(this.serverUrl + 'eventsById', JSON.stringify({listaIds}), httpHeader);
+      return this.http.post<any>(this.serverUrl + 'eventsById?tz=' + this.tz, JSON.stringify(selfParams), httpHeader);
     }
 }

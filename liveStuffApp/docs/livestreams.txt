@@ -18,8 +18,8 @@ To retrieve the start time of an upcoming event, use the videos endpoint with pa
 
 ionic cordova build android --prod --release
 C:\Program Files\Java\jdk1.8.0_162\bin>
-.\jarsigner.exe -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore D:\Projetos_novo\livestuff-1.0.0-key.keystore D:\Projetos_novo\livestuffmaster\liveStuffApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk live_stuff
+.\jarsigner.exe -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore D:\Projetos_novo\livestuff-1.0.0-key.keystore D:\Projetos_novo\livestuff-backup\liveStuffApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk live_stuff
 C:\Program Files (x86)\android-4.4.2>
-.\zipalign.exe -v 4 D:\Projetos_novo\livestuffmaster\liveStuffApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk D:\Projetos_novo\live-stuff.apk
+.\zipalign.exe -v 4 D:\Projetos_novo\livestuff-backup\liveStuffApp\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk D:\Projetos_novo\live-stuff.apk
 alias = live_stuff
 pswq = livestuff-18273645

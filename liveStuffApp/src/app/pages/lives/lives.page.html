@@ -1,4 +1,5 @@
-<ion-header style="background: linear-gradient(to bottom right, #c94b4b 0%, #4b134f 100%) !important;">
+<!--<ion-header style="background: linear-gradient(to bottom right, #c94b4b 0%, #4b134f 100%) !important;">-->
+<ion-header class="pulseHeader">
   <ion-toolbar [hidden]="!hidesearchbar || !hidecategorybar" style="--background: transparent">
     <ion-buttons slot="end">
       <ion-button ion-button class="shareApp">
@@ -12,7 +13,7 @@
       </ion-button>
       <!--<ion-menu-button style="color: white;"></ion-menu-button>-->
     </ion-buttons>
-    <ion-label style="margin-left: 14px;"><h1 style="display: inline; font-family: Muli-Bold; color: #ffffff;">LiveStuff </h1>   <h3 style="display: inline; font-family: Muli-Light; color: #ffffff;">{{selectedComponent.title}}</h3></ion-label>
+    <ion-label style="margin-left: 14px;"><h1 style="display: inline; font-family: Muli-Bold; color: #ffffff;">LiveStuff | </h1>   <h3 style="display: inline; font-family: Muli-Light; color: #ffffff;">{{selectedComponent.title}}</h3></ion-label>
   </ion-toolbar>
   <ion-toolbar [hidden]="hidesearchbar" style="padding-top: 20px; --background: transparent">
     <ion-buttons>
@@ -66,5 +67,6 @@
                            event.title.toLowerCase().indexOf(searchValue.toLowerCase()) === -1)
     )"></app-live-card>
   </div>
-  <ion-label *ngIf="events === undefined || events.length < 1" >Não possuem eventos agendados!</ion-label>
+  <ion-label *ngIf="(events === undefined || events.length < 1) && selectedComponent.url === 'salvos'" ><h1 style="color: #222222;">Infelizmente nosso estagiário não encontrou nenhum evento agendado por você!</h1></ion-label>
+  <ion-label *ngIf="(events === undefined || events.length < 1) && selectedComponent.url !== 'salvos'" ><h1 style="color: #222222;">Infelizmente nosso estagiário não encontrou nenhum evento cadastrado para essa data!</h1></ion-label>
 </ion-content>

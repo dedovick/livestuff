@@ -7,7 +7,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import * as moment from 'moment';
 import { GoogleAnalytics } from '@ionic-native/google-analytics/ngx';
-// import { AdMobPro } from '@ionic-native/admob-pro/ngx';
+import { AdMobPro } from '@ionic-native/admob-pro/ngx';
 
 @Component({
   selector: 'app-live-card',
@@ -25,7 +25,7 @@ export class LiveCardComponent implements OnInit {
   moment: any = moment;
   constructor( public plt: Platform, private socialSharing: SocialSharing, private categoryService: CategoryService,
                private localNotifications: LocalNotifications, private dialogs: Dialogs, private platform: Platform,
-               private nativeStorageService: NativeStorageService, private ga: GoogleAnalytics) {
+               private nativeStorageService: NativeStorageService, private ga: GoogleAnalytics, private admob: AdMobPro) {
               }
   monthList = {
     0: 'Janeiro',
@@ -66,7 +66,7 @@ export class LiveCardComponent implements OnInit {
   }
 
   openUrl(event) {
-    this.reward();
+    // this.reward();
     window.open(event.url, '_system');
   }
 
@@ -77,7 +77,7 @@ export class LiveCardComponent implements OnInit {
 
   sheduleEvent(event) {
     this.ga.trackEvent('scheduleEvent', 'EventScheduled', 'event: ' + event.artista);
-    this.reward();
+    // this.reward();
     const data = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate(), 9, 0, 0, 0);
 
     // Schedule delayed notification
@@ -115,25 +115,44 @@ export class LiveCardComponent implements OnInit {
 
   ionViewDidLoad() {
     /*this.admob.onAdDismiss()
-      .subscribe(() => { console.log('User dismissed ad'); });*/
+      .subscribe(() => { this.dialogs.alert('onAdDismiss', 'onAdDismiss');
+                         window.open(this.event.url, '_system'); });
+    this.admob.onAdLoaded()
+    .subscribe(() => { this.dialogs.alert('onAdLoaded', 'onAdLoaded'); window.open(this.event.url, '_system'); });
+    this.admob.onAdFailLoad()
+    .subscribe(() => { this.dialogs.alert('onAdFailLoad', 'onAdFailLoad'); window.open(this.event.url, '_system'); });
+    this.admob.onAdPresent()
+    .subscribe(() => { this.dialogs.alert('onAdPresent', 'onAdPresent'); window.open(this.event.url, '_system'); });
+    this.admob.onAdLeaveApp()
+    .subscribe(() => { this.dialogs.alert('onAdLeaveApp', 'onAdLeaveApp'); window.open(this.event.url, '_system'); });*/
   }
 
   reward() {
-    /*let adId;
-    if (this.platform.is('android')) {
-      adId = 'ca-app-pub-9511742733388692/8645831223';
-    } else if (this.platform.is('ios')) {
-      adId = 'ca-app-pub-9511742733388692/8645831223';
+    /*if (this.admob) {
+      this.admob.prepareInterstitial( {adId: 'ca-app-pub-9511742733388692/9838672557', autoShow: true, isTesting: true} );
+    if (this.admob) {
+      this.admob.showInterstitial();
     }
-    this.admob.prepareRewardVideoAd({
+    let adId;
+    if (this.platform.is('android')) {
+      adId = 'ca-app-pub-9511742733388692/9838672557';
+    } else if (this.platform.is('ios')) {
+      adId = 'ca-app-pub-9511742733388692/9838672557';
+    }
+    this.admob.prepareInterstitial({
       adId: adId,
+      // autoShow: true,
       isTesting: true // remove in production 
     })
       .then(() => {
         this.admob.showRewardVideoAd();
+        let hideFooterTimeout = setTimeout( () => {
+              window.open(this.event.url, '_system');
+        }, 4000);
       })
       .catch((err) => {
         console.log(err);
       });*/
+
   }
 }
