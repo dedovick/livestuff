@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Alterar Usuario</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+	<%include indice.ejs %>
+    <form action="/editUser" method="post">
+		<input type="hidden" name="userId" id="userId" value="<%= user.id %>"/>
+        <p>Username:<input type="text" name="nome" readonly value="<%= user.username %>"/></p>
+        <p>Email:<input type="text" name="email" value="<%= user.email %>"/></p>
+		<p>Senha atual:<input type="password" name="password" /></p>
+		<p>Nova Senha:<input type="password" name="newPassword" /></p>
+		<p>Confirmar Senha:<input type="password" name="confirmPassword" /></p>
+        <p><input type="submit" value="Salvar" /></p>
+    </form>
+</body>
+</html>
