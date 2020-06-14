@@ -34,6 +34,20 @@ var getCategorias = function(callback, filter){
    Categorias.find(filter).lean().exec(callback);
 };
 
+var getUsuarios = function(callback, filter){
+   
+   var db = require("../db");
+   var Usuarios = db.Mongoose.model('usuarios', db.Usuario, 'usuarios');
+   Usuarios.find(filter).lean().exec(function(err, docs){
+		var result = [];
+		docs.forEach(function(user){
+			result.push({id: user._id, name: user.username});
+		})
+		callback(err, result);
+	}
+   );
+};
+
 var getCategoriasComEvento = function(callback, timezone){
    //Exclui categoria destaque
    if(!timezone){
@@ -95,6 +109,10 @@ var getCanais = function(callback, filter, sort){
    Canais.find(filter).sort(sort).lean().exec(callback);
 };
 
+function isDestaque(categoria) { 
+    return categoria.url === 'destaques';
+}
+
 var getEventos = function(callback, timezone, filter, sort){
 	sort = sort || {dataHora : 1};
 	filter = filter || {};
@@ -117,6 +135,7 @@ var getEventos = function(callback, timezone, filter, sort){
 				videoId: evento.videoId,
 				url: evento.url
 			}
+			resultTmp.isDestaque = evento.categorias.find(isDestaque) !== undefined;
 			resultTmp.dataHoraUTC = evento.dataHora;
 			dataTemp = moment(evento.dataHora).tz(timezone);
 			resultTmp.dataHora = dataTemp.format();
@@ -448,6 +467,31 @@ router.post('/eventos/desativar/:idEvento', authenticationMiddleware(), function
 	
 });
 
+router.get('/addDestaque/:idEvento', authenticationMiddleware(), function(req, res){
+	var idEvento = req.params.idEvento;
+	var db = require("../db");
+	getCategorias(function(err, docs){
+		if(docs.length > 0){
+			const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
+			Evento.findOneAndUpdate( { _id: idEvento }, { $push: { "categorias": docs[0] } }, function(err, result){
+				res.redirect("/listaEventos");
+			} );
+		}
+		else{
+			res.redirect("/listaEventos");
+		}
+	}, {"url": "destaques"});
+});
+
+router.get('/removeDestaque/:idEvento', authenticationMiddleware(), function(req, res){
+	var idEvento = req.params.idEvento;
+	var db = require("../db");
+	const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
+	Evento.findOneAndUpdate( { _id: idEvento }, { $pull: { "categorias": {"url": "destaques"} } }, function(err, result){
+		res.redirect("/listaEventos");
+	} );
+});
+
 var findUser = function(id, callback){ 
 	var db = require("../db");
 	var Usuarios = db.Mongoose.model('usuarios', db.Usuario, 'usuarios');
@@ -469,15 +513,38 @@ router.get('/user/:id', authenticationMiddleware(), function(req, res, next) {
   });
 });
 
-router.post('/editUser/:id', authenticationMiddleware(), function(req, res, next) {
+var updateUser = function(id, userEdit, callback){
+	var db = require("../db");
+	var Usuarios = db.Mongoose.model('usuarios', db.Usuario, 'usuarios');
+	Usuarios.updateOne({"_id": id}, {$set: userEdit}, callback);
+}
+
+router.post('/editUser', authenticationMiddleware(), function(req, res, next) {
 		var password = req.body.password;
-		var id = req.params.id;
+		var id = req.body.userId;
 		console.log(id);
 		findUser(id, function(err, docs){
 			var user = docs[0];
 			bcrypt.compare(password, user.senha, (err, isValid) => {
-				if (err || !isValid) { return done(null, false) }
-				return done(null, user)
+				var newPassword = req.body.newPassword;
+				var confirmPassword = req.body.confirmPassword;
+				isValid = isValid && (newPassword === confirmPassword);
+				if (err || !isValid) { 
+					res.render('editUser', {
+						user: {
+							id: id,
+							username: req.body.nome,
+							email: req.body.email
+						}
+					});
+				}
+				var userEdit = {
+					senha: bcrypt.hashSync(newPassword, 10),
+					email: req.body.email
+				};
+				updateUser(id, userEdit, function(err, result){
+					res.render('index', { title: 'LiveStuff Admin' });
+				});
 			});
 		});
 });
