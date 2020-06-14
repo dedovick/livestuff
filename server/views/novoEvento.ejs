@@ -9,22 +9,38 @@
 	<div id="conteudo">
 		<h1><%= title %></h1>
 		<div style="float:left">
-		<form action="/addEvento" method="post">
-			<p>Nome:<input type="text" name="nome" /></p>
+		<% if(evento._id){ %>
+			<form action="/editEvento/<%=evento._id%>" method="post">
+		<% } else { %>
+			<form action="/addEvento" method="post">
+		<% } %>
+			<p>Nome:<input type="text" name="nome" value="<%= evento.titulo %>"/></p>
 			<p>Canal:
-				<select id="canal" name="canal">
+				<select id="canal" name="canal" >
 				<% listaCanais.forEach(function(canal){ %>
-					<option value="<%=JSON.stringify(canal) %>"> <%= canal.nome %> </option>
+					<option value="<%=JSON.stringify(canal) %>" 
+					<% if(evento.canais.length > 0 && canal._id == evento.canais[0]._id.toString()) { %>
+						selected="selected"
+					<% } %>
+					> <%= canal.nome %> </option>
 				<%})%>
 				</select>
 			</p>
 			<p>Destaque
-				<input type="checkbox" id="destaque" name="destaque"></input>
+				<input type="checkbox" id="destaque" name="destaque" 
+				<% if(evento.isDestaque) { %>
+					checked
+				<% } %>
+				></input>
 			</p>
 			<p>Categoria:
 				<select id="categoria" name="categoria" onchange="changeCat()">
 				<% listaCategorias.forEach(function(categoria){ %>
-					<option value="<%=JSON.stringify(categoria) %>"> <%= categoria.nome %> </option>
+					<option value="<%=JSON.stringify(categoria) %>"
+						<% if(evento.categorias.length > 0 && categoria._id == evento.categorias[0]._id.toString()) { %>
+						selected="selected"
+						<% } %>
+					> <%= categoria.nome %> </option>
 				<%})%>
 				</select>
 			</p>
@@ -32,21 +48,22 @@
 				<select id="subcategoria" name="subcategoria" onchange="changeSub()">
 				</select>
 			</p>
-			<p>Data/Hora:<input type="datetime-local" name="datetime" /></p>
-			<p>Video ID:<input type="text" name="videoId" id="videoId" onchange="videoIdLostFocus()" /></p>
-			<p>Thumb:<input type="text" name="largeImage" id="largeImage" onchange="loadImage()"/></p>
-			<p>URL:<input type="text" name="url" id="url"/></p>
+			<p>Data/Hora:<input type="datetime-local" name="datetime" value="<%= evento.dataHora ? evento.dataHora.toLocaleDateString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).replace(' ','T') : undefined %>"/></p>
+			<p>Video ID:<input type="text" name="videoId" id="videoId" onchange="videoIdLostFocus()" value="<%= evento.videoId %>" /></p>
+			<p>Thumb:<input type="text" name="largeImage" id="largeImage" onchange="loadImage()" value="<%= evento.largeimage %>"/></p>
+			<p>URL:<input type="text" name="url" id="url" value="<%= evento.url %>"/></p>
 			<p><input type="submit" value="Salvar" /></p>
 		</form>
 		</div>
 		<div style="float:right">
-			<img src="" id="thumb" width="300">
+			<img src="<%= evento.largeimage %>" id="thumb" width="300">
 		</div>
 	</div>
 	 <script type='text/javascript'>
 	 
 	var listaSubCategorias = <%-JSON.stringify(listaSubCategorias)%>;
 	var listaCategorias = <%-JSON.stringify(listaCategorias)%>;
+	var subcategoria = <%-evento.subcategorias.length > 0 ? JSON.stringify(evento.subcategorias[0]) : "undefined"%>;
 	
 	function changeCat() {
 		var selected = JSON.parse(document.getElementById("categoria").value);
@@ -60,6 +77,9 @@
 				var c = document.createElement("option");
 				c.text = sub.nome;
 				c.value = JSON.stringify(sub);
+				if(subcategoria && sub._id === subcategoria._id){
+					c.selected = "selected";
+				}
 				elementCat.options.add(c);
 			}
 		});
@@ -88,7 +108,6 @@
 			
 		document.getElementById("categoria").options.remove(0);
 		var catDestaque = listaCategorias[0];
-		console.log(catDestaque);
 		document.getElementById("destaque").value = JSON.stringify(catDestaque);
 		changeCat();
 		

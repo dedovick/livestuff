@@ -336,7 +336,7 @@ router.get('/listaEventos', authenticationMiddleware(), function(req, res) {
    getEventos(
       function (e, docs) {
          res.render('listaEventos', { "listaEventos": docs });
-   });
+   }, undefined, undefined, {dataHora : -1});
 });
 
 // GET /events by idchannel
@@ -454,7 +454,13 @@ router.get('/eventos/cadastro', authenticationMiddleware(), function(req, res) {
 					title: 'Cadastrar evento',
 					listaSubCategorias: subcategorias,
 					listaCanais: canais,
-					listaCategorias: categorias
+					listaCategorias: categorias,
+					evento: { 
+						isDestaque: false,
+						canais: [],
+						categorias: [],
+						subcategorias: []
+					}
 				});
 			});
 		});
@@ -501,7 +507,6 @@ var findUser = function(id, callback){
 router.get('/user/:id', authenticationMiddleware(), function(req, res, next) {
   var id = req.params.id;
   findUser(id, function(err, usr){
-	console.log(usr);
 	res.render('editUser', { 
 		title: 'Editar usuario',
 		user: {
@@ -522,7 +527,6 @@ var updateUser = function(id, userEdit, callback){
 router.post('/editUser', authenticationMiddleware(), function(req, res, next) {
 		var password = req.body.password;
 		var id = req.body.userId;
-		console.log(id);
 		findUser(id, function(err, docs){
 			var user = docs[0];
 			bcrypt.compare(password, user.senha, (err, isValid) => {
@@ -549,10 +553,32 @@ router.post('/editUser', authenticationMiddleware(), function(req, res, next) {
 		});
 });
 
-/* POST Adiciona categoria no banco */
-router.post('/addEvento', authenticationMiddleware(), function (req, res) {
- 
-    var db = require("../db");
+router.get('/editEvento/:idEvento', authenticationMiddleware(), function (req, res) {
+	var idEvento = req.params.idEvento;
+	var db = require("../db");
+	getCategorias(function(e, categorias){
+		getSubCategorias(function (e, subcategorias) {
+			getCanais(function (err, canais){
+				const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
+				Evento.findOne( { _id: idEvento }, function(err, result){
+					result.isDestaque = result.categorias.find(isDestaque) !== undefined;
+					res.render('novoEvento', { 
+						title: 'Editar evento',
+						listaSubCategorias: subcategorias,
+						listaCanais: canais,
+						listaCategorias: categorias,
+						evento: result
+					});
+				});
+			});
+		});
+	});
+	
+	
+});
+
+function preparaEvento(req) {
+	    
 	var canais = [];
 	canais.push(JSON.parse(req.body.canal));
 	var categorias = [];
@@ -570,9 +596,25 @@ router.post('/addEvento', authenticationMiddleware(), function (req, res) {
 		status: 0,
 		dataHora: moment.tz(req.body.datetime, 'America/Sao_Paulo'),
 		url: req.body.url,
-		largeimage: req.body.largeImage
+		largeimage: req.body.largeImage,
+		videoId: req.body.videoId
 	};
-    
+	return eventoAdd;
+}
+router.post('/editEvento/:idEvento', authenticationMiddleware(), function (req, res) {
+	var idEvento = req.params.idEvento;
+	var db = require("../db");
+	var eventoUpdate = preparaEvento(req);
+	const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
+	Evento.findOneAndUpdate( { _id: idEvento }, { $set: eventoUpdate }, function(err, result){
+		res.redirect("/listaEventos");
+	} );
+});
+/* POST Adiciona categoria no banco */
+router.post('/addEvento', authenticationMiddleware(), function (req, res) {
+ 
+    var db = require("../db");
+	var eventoAdd = preparaEvento(req);
 	var Eventos = db.Mongoose.model('eventos', db.Evento, 'eventos');
     var evento = new Eventos(eventoAdd);
     evento.save(function (err) {
