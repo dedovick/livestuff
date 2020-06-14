@@ -48,7 +48,7 @@
 				<select id="subcategoria" name="subcategoria" onchange="changeSub()">
 				</select>
 			</p>
-			<p>Data/Hora:<input type="datetime-local" name="datetime" value="<%= evento.dataHora ? evento.dataHora.toLocaleDateString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).replace(' ','T') : undefined %>"/></p>
+			<p>Data/Hora:<input type="datetime-local" name="datetime" value="<%= evento.formattedDate %>"/></p>
 			<p>Video ID:<input type="text" name="videoId" id="videoId" onchange="videoIdLostFocus()" value="<%= evento.videoId %>" /></p>
 			<p>Thumb:<input type="text" name="largeImage" id="largeImage" onchange="loadImage()" value="<%= evento.largeimage %>"/></p>
 			<p>URL:<input type="text" name="url" id="url" value="<%= evento.url %>"/></p>

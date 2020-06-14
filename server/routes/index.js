@@ -561,6 +561,7 @@ router.get('/editEvento/:idEvento', authenticationMiddleware(), function (req, r
 			getCanais(function (err, canais){
 				const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
 				Evento.findOne( { _id: idEvento }, function(err, result){
+					result.formattedDate = moment.tz(result.dataHora, 'America/Sao_Paulo').format(moment.HTML5_FMT.DATETIME_LOCAL);
 					result.isDestaque = result.categorias.find(isDestaque) !== undefined;
 					res.render('novoEvento', { 
 						title: 'Editar evento',
