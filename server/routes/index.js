@@ -160,6 +160,11 @@ router.post('/login',
   passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login?fail=true' })
 );
 
+router.post('/logout', function(req, res, next){
+  req.logOut();
+  res.redirect('/login');
+})
+
 /* GET CategoryList page. */
 router.get('/listaCategorias', authenticationMiddleware(), function(req, res) {
    getCategorias(function (e, docs) {
@@ -504,8 +509,8 @@ var findUser = function(id, callback){
 	Usuarios.find(new ObjectId(id)).lean().exec(callback);
 }
 
-router.get('/user/:id', authenticationMiddleware(), function(req, res, next) {
-  var id = req.params.id;
+router.get('/user', authenticationMiddleware(), function(req, res, next) {
+  var id = req.user._id;
   findUser(id, function(err, usr){
 	res.render('editUser', { 
 		title: 'Editar usuario',
