@@ -420,6 +420,49 @@ router.post('/eventsById', (req, res) => {
 	}
 });
 
+// GET /events 
+router.post('/search', (req, res) => {
+
+	var timezone = req.body.tz;
+	if(!timezone){
+		timezone = "America/Sao_Paulo";
+	}
+	var filter = {};
+	if(req.body.dtInicial){
+		var dateStart = moment.tz(req.body.dtInicial, 'YYYY-MM-DD', true, timezone);
+
+		var start = new Date(dateStart.startOf('day').format());
+		filter.dataHora = {
+			$gte: start
+		};
+	}
+	if(req.body.dtFinal){
+		var dateEnd = moment.tz(req.body.dtFinal, 'YYYY-MM-DD', true, timezone);
+
+		var end = new Date(dateEnd.endOf('day').format());
+		if(!filter.dataHora){
+			filter.dataHora = {};
+		}
+		filter.dataHora.$lte = end;
+	}
+	var listaIds = req.body.listaIds;
+	if(listaIds && listaIds.length > 0){
+
+		filter["_id"] = listaIds.map(function(e){
+			try{ 
+                	   return ObjectId(e.toString());
+			} catch(error){
+			   return undefined; 
+			}
+		});
+	}
+		
+	getEventos(function (e, docs) {
+		 res.json(docs);
+		 res.end();
+	}, timezone, filter);
+});
+
 // GET /events by date
 router.get('/events/:data', (req, res) => {
 	var dataFiltro = req.params.data;
