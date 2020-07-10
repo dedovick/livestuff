@@ -34,6 +34,20 @@ var getCategorias = function(callback, filter){
    Categorias.find(filter).lean().exec(callback);
 };
 
+var getUsuarios = function(callback, filter){
+   
+   var db = require("../db");
+   var Usuarios = db.Mongoose.model('usuarios', db.Usuario, 'usuarios');
+   Usuarios.find(filter).lean().exec(function(err, docs){
+		var result = [];
+		docs.forEach(function(user){
+			result.push({id: user._id, name: user.username});
+		})
+		callback(err, result);
+	}
+   );
+};
+
 var getCategoriasComEvento = function(callback, timezone){
    //Exclui categoria destaque
    if(!timezone){
@@ -95,6 +109,10 @@ var getCanais = function(callback, filter, sort){
    Canais.find(filter).sort(sort).lean().exec(callback);
 };
 
+function isDestaque(categoria) { 
+    return categoria.url === 'destaques';
+}
+
 var getEventos = function(callback, timezone, filter, sort){
 	sort = sort || {dataHora : 1};
 	filter = filter || {};
@@ -117,6 +135,7 @@ var getEventos = function(callback, timezone, filter, sort){
 				videoId: evento.videoId,
 				url: evento.url
 			}
+			resultTmp.isDestaque = evento.categorias.find(isDestaque) !== undefined;
 			resultTmp.dataHoraUTC = evento.dataHora;
 			dataTemp = moment(evento.dataHora).tz(timezone);
 			resultTmp.dataHora = dataTemp.format();
@@ -140,6 +159,11 @@ router.get('/login', function(req, res){
 router.post('/login',
   passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login?fail=true' })
 );
+
+router.post('/logout', function(req, res, next){
+  req.logOut();
+  res.redirect('/login');
+})
 
 /* GET CategoryList page. */
 router.get('/listaCategorias', authenticationMiddleware(), function(req, res) {
@@ -317,7 +341,7 @@ router.get('/listaEventos', authenticationMiddleware(), function(req, res) {
    getEventos(
       function (e, docs) {
          res.render('listaEventos', { "listaEventos": docs });
-   });
+   }, undefined, undefined, {dataHora : -1});
 });
 
 // GET /events by idchannel
@@ -396,6 +420,49 @@ router.post('/eventsById', (req, res) => {
 	}
 });
 
+// GET /events 
+router.post('/search', (req, res) => {
+
+	var timezone = req.body.tz;
+	if(!timezone){
+		timezone = "America/Sao_Paulo";
+	}
+	var filter = {};
+	if(req.body.dtInicial){
+		var dateStart = moment.tz(req.body.dtInicial, 'YYYY-MM-DD', true, timezone);
+
+		var start = new Date(dateStart.startOf('day').format());
+		filter.dataHora = {
+			$gte: start
+		};
+	}
+	if(req.body.dtFinal){
+		var dateEnd = moment.tz(req.body.dtFinal, 'YYYY-MM-DD', true, timezone);
+
+		var end = new Date(dateEnd.endOf('day').format());
+		if(!filter.dataHora){
+			filter.dataHora = {};
+		}
+		filter.dataHora.$lte = end;
+	}
+	var listaIds = req.body.listaIds;
+	if(listaIds && listaIds.length > 0){
+
+		filter["_id"] = listaIds.map(function(e){
+			try{ 
+                	   return ObjectId(e.toString());
+			} catch(error){
+			   return undefined; 
+			}
+		});
+	}
+		
+	getEventos(function (e, docs) {
+		 res.json(docs);
+		 res.end();
+	}, timezone, filter);
+});
+
 // GET /events by date
 router.get('/events/:data', (req, res) => {
 	var dataFiltro = req.params.data;
@@ -435,7 +502,13 @@ router.get('/eventos/cadastro', authenticationMiddleware(), function(req, res) {
 					title: 'Cadastrar evento',
 					listaSubCategorias: subcategorias,
 					listaCanais: canais,
-					listaCategorias: categorias
+					listaCategorias: categorias,
+					evento: { 
+						isDestaque: false,
+						canais: [],
+						categorias: [],
+						subcategorias: []
+					}
 				});
 			});
 		});
@@ -448,16 +521,40 @@ router.post('/eventos/desativar/:idEvento', authenticationMiddleware(), function
 	
 });
 
+router.get('/addDestaque/:idEvento', authenticationMiddleware(), function(req, res){
+	var idEvento = req.params.idEvento;
+	var db = require("../db");
+	getCategorias(function(err, docs){
+		if(docs.length > 0){
+			const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
+			Evento.findOneAndUpdate( { _id: idEvento }, { $push: { "categorias": docs[0] } }, function(err, result){
+				res.redirect("/listaEventos");
+			} );
+		}
+		else{
+			res.redirect("/listaEventos");
+		}
+	}, {"url": "destaques"});
+});
+
+router.get('/removeDestaque/:idEvento', authenticationMiddleware(), function(req, res){
+	var idEvento = req.params.idEvento;
+	var db = require("../db");
+	const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
+	Evento.findOneAndUpdate( { _id: idEvento }, { $pull: { "categorias": {"url": "destaques"} } }, function(err, result){
+		res.redirect("/listaEventos");
+	} );
+});
+
 var findUser = function(id, callback){ 
 	var db = require("../db");
 	var Usuarios = db.Mongoose.model('usuarios', db.Usuario, 'usuarios');
 	Usuarios.find(new ObjectId(id)).lean().exec(callback);
 }
 
-router.get('/user/:id', authenticationMiddleware(), function(req, res, next) {
-  var id = req.params.id;
+router.get('/user', authenticationMiddleware(), function(req, res, next) {
+  var id = req.user._id;
   findUser(id, function(err, usr){
-	console.log(usr);
 	res.render('editUser', { 
 		title: 'Editar usuario',
 		user: {
@@ -469,23 +566,68 @@ router.get('/user/:id', authenticationMiddleware(), function(req, res, next) {
   });
 });
 
-router.post('/editUser/:id', authenticationMiddleware(), function(req, res, next) {
+var updateUser = function(id, userEdit, callback){
+	var db = require("../db");
+	var Usuarios = db.Mongoose.model('usuarios', db.Usuario, 'usuarios');
+	Usuarios.updateOne({"_id": id}, {$set: userEdit}, callback);
+}
+
+router.post('/editUser', authenticationMiddleware(), function(req, res, next) {
 		var password = req.body.password;
-		var id = req.params.id;
-		console.log(id);
+		var id = req.body.userId;
 		findUser(id, function(err, docs){
 			var user = docs[0];
 			bcrypt.compare(password, user.senha, (err, isValid) => {
-				if (err || !isValid) { return done(null, false) }
-				return done(null, user)
+				var newPassword = req.body.newPassword;
+				var confirmPassword = req.body.confirmPassword;
+				isValid = isValid && (newPassword === confirmPassword);
+				if (err || !isValid) { 
+					res.render('editUser', {
+						user: {
+							id: id,
+							username: req.body.nome,
+							email: req.body.email
+						}
+					});
+				}
+				var userEdit = {
+					senha: bcrypt.hashSync(newPassword, 10),
+					email: req.body.email
+				};
+				updateUser(id, userEdit, function(err, result){
+					res.render('index', { title: 'LiveStuff Admin' });
+				});
 			});
 		});
 });
 
-/* POST Adiciona categoria no banco */
-router.post('/addEvento', authenticationMiddleware(), function (req, res) {
- 
-    var db = require("../db");
+router.get('/editEvento/:idEvento', authenticationMiddleware(), function (req, res) {
+	var idEvento = req.params.idEvento;
+	var db = require("../db");
+	getCategorias(function(e, categorias){
+		getSubCategorias(function (e, subcategorias) {
+			getCanais(function (err, canais){
+				const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
+				Evento.findOne( { _id: idEvento }, function(err, result){
+					result.formattedDate = moment.tz(result.dataHora, 'America/Sao_Paulo').format(moment.HTML5_FMT.DATETIME_LOCAL);
+					result.isDestaque = result.categorias.find(isDestaque) !== undefined;
+					res.render('novoEvento', { 
+						title: 'Editar evento',
+						listaSubCategorias: subcategorias,
+						listaCanais: canais,
+						listaCategorias: categorias,
+						evento: result
+					});
+				});
+			});
+		});
+	});
+	
+	
+});
+
+function preparaEvento(req) {
+	    
 	var canais = [];
 	canais.push(JSON.parse(req.body.canal));
 	var categorias = [];
@@ -503,9 +645,25 @@ router.post('/addEvento', authenticationMiddleware(), function (req, res) {
 		status: 0,
 		dataHora: moment.tz(req.body.datetime, 'America/Sao_Paulo'),
 		url: req.body.url,
-		largeimage: req.body.largeImage
+		largeimage: req.body.largeImage,
+		videoId: req.body.videoId
 	};
-    
+	return eventoAdd;
+}
+router.post('/editEvento/:idEvento', authenticationMiddleware(), function (req, res) {
+	var idEvento = req.params.idEvento;
+	var db = require("../db");
+	var eventoUpdate = preparaEvento(req);
+	const Evento = db.Mongoose.model('eventos', db.Evento, 'eventos');
+	Evento.findOneAndUpdate( { _id: idEvento }, { $set: eventoUpdate }, function(err, result){
+		res.redirect("/listaEventos");
+	} );
+});
+/* POST Adiciona categoria no banco */
+router.post('/addEvento', authenticationMiddleware(), function (req, res) {
+ 
+    var db = require("../db");
+	var eventoAdd = preparaEvento(req);
 	var Eventos = db.Mongoose.model('eventos', db.Evento, 'eventos');
     var evento = new Eventos(eventoAdd);
     evento.save(function (err) {
