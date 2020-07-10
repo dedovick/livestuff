@@ -9,19 +9,68 @@
   }
 
 .sub-cta-selected {
-  --background: thistle;
-  color: black !important;
+  color: white !important;
+}
+
+.cat-selected{
+  width: 60%;
+  --border-radius: 0px !important;
+  border-bottom: 3px solid;
+  border-color: white;
+}
+
+.confirm_btn{
+  width: 60%;
+  --border-radius: 0px !important;
+}
+
+.cat-not-selected{
+  width: 60%;
+  --border-radius: 0px !important;
 }
 
 .data-button{
   --border-style: solid !important;
   --border-color: white !important;
   --border-width: 1px !important;
-  width: 100%;
+  position: relative;
+  padding-left: 5px;
+  --background: transparent;
+  //width: 100%;
 }
 
-.pulseHeader {
+.buttons-data{
+  width: 100%;  
   background: linear-gradient(316deg, #c94b4b, #4b134f);
+  opacity: 0.8;
+}
+
+.item-data{
+  width: 100%;
+  //position: fixed;
+  z-index: 10;
+}
+
+.pulseHeaderMusica {
+  background: linear-gradient(316deg, #c94b4b, #4b134f);
+  background-size: 400% 400%;
+
+  -webkit-animation: AnimationName 4s ease infinite;
+  -moz-animation: AnimationName 4s ease infinite;
+  animation: AnimationName 4s ease infinite;
+}
+
+.pulseHeaderGames {
+  background: linear-gradient(316deg, #62da3e, #2b1364);
+  background-size: 400% 400%;
+
+  -webkit-animation: AnimationName 4s ease infinite;
+  -moz-animation: AnimationName 4s ease infinite;
+  animation: AnimationName 4s ease infinite;
+}
+
+.pulseHeaderGeneral {
+  background: linear-gradient(316deg, #c7c94b, #1e191f);
   background-size: 400% 400%;
 
   -webkit-animation: AnimationName 4s ease infinite;

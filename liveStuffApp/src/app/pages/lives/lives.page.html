@@ -1,6 +1,8 @@
 <!--<ion-header style="background: linear-gradient(to bottom right, #c94b4b 0%, #4b134f 100%) !important;">-->
-<ion-header class="pulseHeader">
-  <ion-toolbar [hidden]="!hidesearchbar || !hidecategorybar" style="--background: transparent">
+<ion-header [ngClass]="{'pulseHeaderMusica': selectedComponent.url === 'music', 
+'pulseHeaderGames' :  selectedComponent.url === 'games', 
+'pulseHeaderGeneral' : selectedComponent.url !== 'music' && selectedComponent.url !== 'games'}">
+  <ion-toolbar [hidden]="!hidesearchbar || !hideoptionshbar" style="--background: transparent">
     <ion-buttons slot="end">
       <ion-button ion-button class="shareApp">
         <img src="assets/icon/drawable/share_24_px.svg" (click)="shareApp()">
@@ -8,32 +10,25 @@
       <ion-button (click)="openSearchBar()" >
         <ion-icon name="search-sharp" style="color: white;"></ion-icon>
       </ion-button>
-      <ion-button (click)="openCategoryBar()" >
-        <ion-icon name="{{selectedComponent.icon}}-sharp" style="color: white;"></ion-icon>
+      <ion-button (click)="openOptionsBar()" >
+        <ion-icon name="options-outline" style="color: white;"></ion-icon>
       </ion-button>
-      <!--<ion-menu-button style="color: white;"></ion-menu-button>-->
     </ion-buttons>
     <ion-label style="margin-left: 14px;"><h1 style="display: inline; font-family: Muli-Bold; color: #ffffff;">LiveStuff | </h1>   <h3 style="display: inline; font-family: Muli-Light; color: #ffffff;">{{selectedComponent.title}}</h3></ion-label>
   </ion-toolbar>
   <ion-toolbar [hidden]="hidesearchbar" style="padding-top: 20px; --background: transparent">
     <ion-buttons>
       <ion-searchbar show-cancel-button="always" [(ngModel)]='searchValue' (ionCancel)="openSearchBar()" animated></ion-searchbar>
-      <ion-button (click)="openCategoryBar()" style="padding-bottom: 10px;">
-        <ion-icon name="{{selectedComponent.icon}}-sharp" style="color: white;"></ion-icon>
-      </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar [hidden]="hidecategorybar" style="padding-top: 10px; --background: transparent">
-    <ion-buttons slot="end">
-      <ion-button *ngFor="let cat of catList" (click)="selectCatBar(cat)" >
-        <ion-icon name="{{cat.icon}}-outline" style="color: white;"></ion-icon>
-      </ion-button>
-      <ion-button (click)="openCategoryBar()" >
-        <ion-icon name="{{selectedComponent.icon}}-sharp" style="color: white;"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar style="--background: transparent">
+  <ion-toolbar [hidden]="!hideoptionshbar"style="--background: transparent">
+    <div style="padding-bottom: 5px;width: 100%;">
+      <ion-buttons slot="end" style="width: 100%;">
+        <ion-button *ngFor="let cat of catList" (click)="selectCatBar(cat)"  [ngClass]="{'cat-selected': selectedComponent === cat, 'cat-not-selected' : selectedComponent !== cat}">
+          <ion-icon name="{{cat.icon}}-outline" style="color: black;" [ngClass]="{'sub-cta-selected': selectedComponent === cat}"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </div>
     <div padding class="scrolling-wrapper" scrollX="true">
       <div *ngFor="let cat of categorias " class="card">
         <ion-chip  [hidden]="cat.value <= 0" [ngClass]="{'sub-cta-selected': selectedCat === cat.key}">
@@ -41,21 +36,48 @@
         </ion-chip>
       </div>
     </div>
-    <ion-item color="none" lines="none">
-      <div style="width: 60%; text-align: start;">
-        <ion-buttons style="width: 100%;" slot="star">
-          <ion-button (click)="selectData()" class="data-button">
-            <ion-icon name="calendar-sharp" style="color: white;"></ion-icon>
-            <ion-label style="color: white; margin-left: 6px;">{{showData}}</ion-label>
+  </ion-toolbar>
+  <ion-toolbar [hidden]="hideoptionshbar" style="padding-top: 20px; --background: transparent;">
+    <ion-buttons  style="width: 100%;">
+      <ion-button style="color: white" (click)="selectOption(options.LIVE)" [ngClass]="(selectedOption === options.LIVE) ? 'cat-selected' : 'cat-not-selected'">
+        <ion-icon style="color: black;" name="radio-button-on"  [ngClass]="{'sub-cta-selected': selectedOption === options.LIVE}"></ion-icon>
+      </ion-button>
+      <ion-button style="color: white" (click)="selectOption(options.SCHEDULE)"  [ngClass]="(selectedOption === options.SCHEDULE) ? 'cat-selected' : 'cat-not-selected'">
+        <ion-icon style="color: black;" name="calendar-sharp" [ngClass]="{'sub-cta-selected': selectedOption === options.SCHEDULE}"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <div style="width: 100%;">
+      <ion-item color="none" lines="none" class="item-data" disabled="{{selectedOption === options.LIVE}}">
+        <ion-checkbox [(ngModel)]="dataOptions.di" slot="start"></ion-checkbox>
+        <ion-label (click)="enableData(options.DATA_INICIAL)"  style="color: black;" [ngClass]="{'sub-cta-selected': selectedOption === options.SCHEDULE}">Data inicial: </ion-label>
+        <ion-buttons>
+          <ion-button disabled="{{selectedOption === options.LIVE || dataOptions.di === false}}">
+            <ion-label (click)="selectData(options.DATA_INICIAL)" style="color: black;" [ngClass]="{'sub-cta-selected': selectedOption === options.SCHEDULE}">{{showData}}</ion-label>
           </ion-button>
-        </ion-buttons>
-      </div>
-      <div style="width: 20%; text-align: end;">
-        <ion-button color="red" (click)="cleanData()" style="margin-left: 5%;" [hidden]="showData === 'DATA'">
-          <ion-label>Limpar</ion-label>
+      </ion-buttons>
+      </ion-item>
+      <ion-item color="none" lines="none" class="item-data" disabled="{{selectedOption === options.LIVE}}">
+        <ion-checkbox  [(ngModel)]="dataOptions.df"  slot="start"></ion-checkbox>
+        <ion-label (click)="enableData(options.DATA_FINAL)" style="color: black;" [ngClass]="{'sub-cta-selected': selectedOption === options.SCHEDULE}">Data final: </ion-label>
+        <ion-buttons>
+          <ion-button disabled="{{selectedOption === options.LIVE || dataOptions.df === false}}">
+            <ion-label (click)="selectData(options.DATA_FINAL)" style="color: black;" [ngClass]="{'sub-cta-selected': selectedOption === options.SCHEDULE}">{{showData}}</ion-label>
+          </ion-button>
+      </ion-buttons>
+      </ion-item>
+      <ion-buttons>
+        <ion-button class="confirm_btn" (click)="openOptionsBar()">
+          <ion-chip>
+            <ion-label style="color:white;" >Cancelar</ion-label>
+          </ion-chip>
         </ion-button>
-      </div>
-    </ion-item>
+        <ion-button class="confirm_btn" (click)="openOptionsBar()">
+          <ion-chip>
+            <ion-label style="color:white;" >Pesquisar</ion-label>
+          </ion-chip>
+        </ion-button>
+      </ion-buttons>
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -67,6 +89,6 @@
                            event.title.toLowerCase().indexOf(searchValue.toLowerCase()) === -1)
     )"></app-live-card>
   </div>
-  <ion-label *ngIf="(events === undefined || events.length < 1) && selectedComponent.url === 'salvos'" ><h1 style="color: #222222;">Infelizmente nosso estagiário não encontrou nenhum evento agendado por você!</h1></ion-label>
-  <ion-label *ngIf="(events === undefined || events.length < 1) && selectedComponent.url !== 'salvos'" ><h1 style="color: #222222;">Infelizmente nosso estagiário não encontrou nenhum evento cadastrado para essa data!</h1></ion-label>
+  <ion-label *ngIf="(events === undefined || events.length < 1) && selectedComponent.url === 'salvos' && allowEmptyMsg === true" ><h1 style="color: #222222;">Infelizmente nosso estagiário não encontrou nenhum evento agendado por você!</h1></ion-label>
+  <ion-label *ngIf="(events === undefined || events.length < 1) && selectedComponent.url !== 'salvos' && allowEmptyMsg === true" ><h1 style="color: #222222;">Infelizmente nosso estagiário não encontrou nenhum evento cadastrado para essa data!</h1></ion-label>
 </ion-content>

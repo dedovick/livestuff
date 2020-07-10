@@ -8,6 +8,7 @@ import { Dialogs } from '@ionic-native/dialogs/ngx';
 import * as moment from 'moment';
 import { GoogleAnalytics } from '@ionic-native/google-analytics/ngx';
 import { AdMobPro } from '@ionic-native/admob-pro/ngx';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-live-card',
@@ -23,9 +24,11 @@ export class LiveCardComponent implements OnInit {
   };
   date: any;
   moment: any = moment;
+  vidUrl: SafeResourceUrl;
   constructor( public plt: Platform, private socialSharing: SocialSharing, private categoryService: CategoryService,
                private localNotifications: LocalNotifications, private dialogs: Dialogs, private platform: Platform,
-               private nativeStorageService: NativeStorageService, private ga: GoogleAnalytics, private admob: AdMobPro) {
+               private nativeStorageService: NativeStorageService, private ga: GoogleAnalytics, private admob: AdMobPro,
+               private domSatinizer: DomSanitizer) {
               }
   monthList = {
     0: 'Janeiro',
@@ -55,6 +58,8 @@ export class LiveCardComponent implements OnInit {
     this.categoryService.addSubCategory(this.event.type);
     this.dataStorage = this.nativeStorageService.getdataStorage();
     this.date = new Date(this.event.dataHora);
+    this.vidUrl = this.domSatinizer.bypassSecurityTrustResourceUrl('http://www.youtube.com/embed/' + 
+      this.event.videoId);
   }
 
   getMonth(month) {

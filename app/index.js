@@ -16,6 +16,7 @@ var passport       = require('passport');
 var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 var request        = require('request');
 var handlebars     = require('handlebars');
+var HashMap = require('hashmap');
 const cors         = require('cors');
 
 // Define our constants, you will change these with your own
@@ -33,6 +34,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 let gameList = [];
+let ytMusicList = [];
+var ytMusicMap = new HashMap();
 let gameCatList = [];
 let isUpdating = false;
 let userLoginList = [
@@ -300,7 +303,43 @@ function streamListUpdate(accessToken) {
     }
     });
 
-}
+};
+
+function youtubeStreamListUpdate(){
+  var options = {
+    url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyDtbEKEUxgJb1TeugAVKTFIuTJmYocnvbE&type=video&eventType=live&order=viewCount&videoCategoryId=10&regionCode=BR&maxResults=10',
+    method: 'GET',
+    headers: {}
+  };
+  request(options, function (error, response, body) {
+    ytMusicList = [];
+    data = JSON.parse(body);
+    var idList = '';
+    data.items.forEach(video => {
+      //ytMusicList.push(video.id.videoId);
+      idList += video.id.videoId + ',';
+      var lsObject = ytConverter(video)
+      ytMusicList.push(ytConverter(video));
+      ytMusicMap.set(lsObject.videoId, lsObject);
+    });
+    //console.log('AAAAAAAAAAAAAAAAAAAAAAAAAA: ' + JSON.stringify(ytMusicList));
+    var options = {
+      url: 'https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&key=AIzaSyDtbEKEUxgJb1TeugAVKTFIuTJmYocnvbE&id=' + idList,
+      method: 'GET',
+      headers: {}
+    };
+    request(options, function (error, response, body) {
+      data = JSON.parse(body);
+      data.items.forEach(video => {
+        ytMusicMap.get(video.id).concurrentViewers = video.liveStreamingDetails.concurrentViewers;
+      });
+      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB: ' + JSON.stringify(ytMusicMap));
+      setTimeout(function() {
+        youtubeStreamListUpdate();
+      }, 180000);
+    });
+  });
+};
 
 function getStreamByGameId(gameIdList, accessToken){
   url = 'https://api.twitch.tv/helix/streams?language=pt';
@@ -426,7 +465,20 @@ function getGameName(id, accessToken) {
   return id;
 }
 
+function ytConverter(ytObject) {
+  var lsObject = {
+    videoId : ytObject.id.videoId,
+    artista: ytObject.snippet.channelTitle,
+    title: ytObject.snippet.title,
+    largeimage: ytObject.snippet.thumbnails.high.url,
+    concurrentViewers: 0,
+    type: ''
+  }
 
+  return lsObject;
+}
+
+youtubeStreamListUpdate();
 
 // https://api.twitch.tv/helix/games/top
 // https://api.twitch.tv/helix/streams?first=20

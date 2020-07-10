@@ -18,19 +18,35 @@ import * as moment from 'moment';
 })
 export class LivesPage implements OnInit {
   public selectedComponent: any;
+  public options = {
+    LIVE: 'live',
+    SCHEDULE: 'schedule',
+    DATA_INICIAL: 'di',
+    DATA_FINAL: 'df'
+  };
+  public selectedOption = this.options.LIVE;
+  public dataOptions = {
+    di: false,
+    df: false
+  };
   categorias: any;
   events: any;
   selectedCat = '';
   hidesearchbar = true;
-  hidecategorybar = true;
+  hideoptionshbar = true;
   searchValue = '';
-  todayString = '';
   today = new Date();
   selectedData = undefined;
-  showData = 'DATA';
+  showData = '';
+  showDataFinal = '';
   dataStorage: any;
   messageApp = 'Baixe o APP LiveStuff em ';
   appUrl = 'bit.ly/LiveStuffApp';
+  allowEmptyMsg = false;
+  form = {
+    dataInicial: new Date(),
+    dataFinal: new Date(),
+  };
 
   public catList: any;
   /*public catList = [
@@ -38,41 +54,6 @@ export class LivesPage implements OnInit {
       title: 'Destaques',
       url: 'destaques',
       icon: 'star'
-    },
-    {
-      title: 'Música',
-      url: 'music',
-      icon: 'musical-notes'
-    },
-    {
-      title: 'Games',
-      url: 'games',
-      icon: 'game-controller'
-    },
-    {
-      title: 'Educação',
-      url: 'educacao',
-      icon: 'library'
-    },
-    {
-      title: 'Esportes',
-      url: 'esportes',
-      icon: 'football'
-    },
-    {
-      title: 'Comédia',
-      url: 'comedia',
-      icon: 'happy'
-    },
-    {
-      title: 'Variados',
-      url: 'variados',
-      icon: 'images'
-    },
-    {
-      title: 'Salvos',
-      url: 'salvos',
-      icon: 'bookmark'
     }
   ];*/
   option: GlobalizationOptions;
@@ -84,20 +65,29 @@ export class LivesPage implements OnInit {
               private nativeStorageService: NativeStorageService, private loadingControllerService: LoadingControlleServiceService,
               private ga: GoogleAnalytics, private socialSharing: SocialSharing, private datePicker: DatePicker, private dialogs: Dialogs) {
                 this.loadingControllerService.present();
-                const year = this.today.getFullYear();
-                const month = this.today.getMonth() + 1;
-                const date = this.today.getDate();
-
+                const date = new Date();
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                let auxmonth = '';
+                let auxday = '';
                 if (month > 9) {
-                  this.todayString = year + '-' + month;
+                  this.selectedData = year + '-' + month;
+                  auxmonth = month.toString();
                 } else {
-                  this.todayString = year + '-0' + month;
+                  this.selectedData = year + '-0' + month;
+                  auxmonth = '0' + month;
                 }
-                if (date > 9) {
-                  this.todayString += '-' + date;
+                if (day > 9) {
+                  this.selectedData += '-' + day;
+                  auxday = day.toString();
                 } else {
-                  this.todayString += '-0' + date;
+                  this.selectedData += '-0' + day;
+                  auxday = '0' + day;
                 }
+
+                this.showData = auxday + '-' + auxmonth + '-' + year;
+                this.showDataFinal = auxday + '-' + auxmonth + '-' + year;
               }
 
   async ngOnInit() {
@@ -134,7 +124,10 @@ export class LivesPage implements OnInit {
           this.events = dataEvents;
           this.loadingControllerService.dismiss();
           this.changeDetectionRef.detectChanges();
-
+          this.allowEmptyMsg = true;
+        },
+        error => {
+          this.allowEmptyMsg = true;
         });
     });
   }
@@ -149,6 +142,10 @@ export class LivesPage implements OnInit {
     }
   }
 
+  selectOption(option) {
+    this.selectedOption = option;
+  }
+
   openSearchBar() {
     if (!this.hidesearchbar) {
       this.searchValue = '';
@@ -158,38 +155,41 @@ export class LivesPage implements OnInit {
     this.hidesearchbar = !this.hidesearchbar;
   }
 
-  cleanData() {
-    if (this.selectedData !== undefined) {
-      this.showData = 'DATA';
-      this.loadingControllerService.present();
-      this.categoryService.clearData();
-      this.selectedData = undefined;
-      const res = this.serverClientService.getEvents(undefined, this.selectedComponent.url);
-      res.subscribe(data => {
-        this.events = data;
-        this.loadingControllerService.dismiss();
-        this.changeDetectionRef.detectChanges();
-      });
+  openOptionsBar() {
+
+    this.hideoptionshbar = !this.hideoptionshbar;
+  }
+
+  enableData(dataType) {
+    if (dataType === this.options.DATA_INICIAL) {
+      this.dataOptions.di = !this.dataOptions.di;
+    } else if (dataType === this.options.DATA_FINAL) {
+      this.dataOptions.df = !this.dataOptions.df;
     }
   }
 
-  updateMyDate() {
+  updateMyDate(dataType) {
     if (this.selectedData !== undefined) {
-      this.ga.trackEvent('updateMyDate', 'Seleciona data', 'Data: ' + this.selectedData, this.selectedData);
+      this.ga.trackEvent('updateMyDate ' + dataType, 'Seleciona data', 'Data ' + dataType + ' : ' + this.selectedData, this.selectedData);
       this.loadingControllerService.present();
       this.categoryService.clearData();
       this.selectedCat = '';
+      this.allowEmptyMsg = false;
       const res = this.serverClientService.getEvents(this.selectedData.substring(0, 10), this.selectedComponent.url);
       res.subscribe(data => {
         console.log(data);
         this.events = data;
         this.loadingControllerService.dismiss();
         this.changeDetectionRef.detectChanges();
+        this.allowEmptyMsg = true;
+      },
+      error => {
+        this.allowEmptyMsg = true;
       });
     }
   }
 
-  selectData() {
+  selectData(dataType) {
     this.datePicker.show({
       date: new Date(),
       mode: 'date',
@@ -218,19 +218,15 @@ export class LivesPage implements OnInit {
           this.selectedData += '-0' + day;
           auxday = '0' + day;
         }
-        this.showData = auxday + '-' + auxmonth + '-' + year;
-        this.updateMyDate();
+        if (dataType === this.options.DATA_INICIAL) {
+          this.showData = auxday + '-' + auxmonth + '-' + year;
+        } else {
+          this.showDataFinal = auxday + '-' + auxmonth + '-' + year;
+        }
+        this.updateMyDate(dataType);
       },
       err => console.log('Error occurred while getting date: ', err)
     );
-  }
-
-  openCategoryBar() {
-    this.hidecategorybar = !this.hidecategorybar;
-    if (!this.hidesearchbar) {
-      this.searchValue = '';
-      this.hidesearchbar = !this.hidesearchbar;
-    }
   }
 
   selectCatBar(cat) {
@@ -247,6 +243,7 @@ export class LivesPage implements OnInit {
 
     this.categoryService.clearData();
     this.loadingControllerService.present();
+    this.allowEmptyMsg = false;
 
     if (this.selectedComponent.url === 'salvos') {
       this.events = [];
@@ -256,8 +253,10 @@ export class LivesPage implements OnInit {
         this.events = data;
         this.loadingControllerService.dismiss();
         this.changeDetectionRef.detectChanges();
-      }, error => {
-        console.log('ERROR: ' + JSON.stringify(error), 'Agenda');
+        this.allowEmptyMsg = true;
+      },
+      error => {
+        this.allowEmptyMsg = true;
       });
     } else {
       const resLives = this.serverClientService.getEvents(undefined, this.selectedComponent.url);
@@ -265,9 +264,12 @@ export class LivesPage implements OnInit {
         this.events = data;
         this.loadingControllerService.dismiss();
         this.changeDetectionRef.detectChanges();
+        this.allowEmptyMsg = true;
+      },
+      error => {
+        this.allowEmptyMsg = true;
       });
     }
-    this.hidecategorybar = !this.hidecategorybar;
   }
 
   shareApp() {
