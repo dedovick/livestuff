@@ -9,6 +9,9 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const nodemailer = require('nodemailer')
 
+const schedule = require('node-schedule');
+const axios = require('axios');
+
 // Create server
 const app = express()
 app.use(cors())
@@ -19,6 +22,10 @@ const authMailer = {
   user: 'livestuff.app@gmail.com',
   pass: 'yjdsdigwwgvtzvsm'
 }
+
+// apiKey = 'AIzaSyDtbEKEUxgJb1TeugAVKTFIuTJmYocnvbE';
+apiKey = 'AIzaSyDvU-p8k5p4mIDZd5J8_OsDmxep6o0VjrA';
+// apiKey = 'AIzaSyD764OD2XbE_7QYqfZgkDW-8mZ7EqbEU4E';
 
 // Create database instance and start server
 const adapter = new FileAsync('db.json')
@@ -75,12 +82,12 @@ low(adapter)
       res.send(post)
     })
 
-	app.get('/categorias', (req, res) => {
+	  app.get('/categorias', (req, res) => {
       const post = db.get('categorias').sortBy('ordem').value();
       res.send(post)
     })
 	
-	app.get('/subcategorias/:idCategoria', (req, res) => {
+	  app.get('/subcategorias/:idCategoria', (req, res) => {
       const post = db.get('subcategorias').sortBy('nome').filter({ idCategoria: parseInt(req.params.idCategoria) }).value();
       res.send(post)
     })
@@ -145,6 +152,63 @@ low(adapter)
 
       res.end('Email sent')
     })
+
+    var rule = new schedule.RecurrenceRule();
+    rule.hour = 21;
+    rule.minute = 12;
+    rule.second = 00;
+
+    var j = schedule.scheduleJob(rule, function(){
+      console.log('Entrou na rotina')
+      // const events = db.get('event').filter({data : '2020-04-25'}).value();
+      const channels = db.get('channel').value();
+
+      // events.forEach(event => {
+      //   console.log('Encontrou eventos: ' + event)
+      //   axios.get('https://www.googleapis.com/youtube/v3/videos?part=snippet&key=' + apiKey + '&id=' + event.videoId)
+      //     .then(response => {
+      //       console.log(response.data.items);
+      //     })
+      //     .catch(error => {
+      //       console.log(error);
+      //     });
+      // });
+
+      channels.forEach(channel => {
+        
+        console.log('Encontrou canais: ' + channel.nome)
+        axios.get('https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + apiKey + '&channelId=' + channel.idYoutube + '&type=video' + '&eventType=upcoming')
+          .then(response1 => {
+            console.log(response1.data.items);
+            const isDataAvailable = Object.keys(response1.data.items).length > 0;
+            
+            if (isDataAvailable) {
+
+              const hasValueInDb = db.get('event').filter({videoId : response1.data.items[0].id.videoId}).value();
+
+              if (hasValueInDb.length > 0) {
+                console.log('ALREADY HAVE');
+              } else {
+                console.log(response1.data.items[0].id);
+                axios.get('https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&key=' + apiKey + '&id=' + response1.data.items[0].id.videoId)
+                  .then(response2 => {
+                    console.log(response2.data.items[0].liveStreamingDetails.scheduledStartTime);
+                    // db.get('new_events')
+                    //   .push({ artista: response1.data.items[0].channelTitle, data: response2.data.items[0].liveStreamingDetails.scheduledStartTime, time: response2.data.items[0].liveStreamingDetails.scheduledStartTime})
+                    //   .write()
+                })
+                .catch(error => {
+                  console.log(error);
+                });
+              }
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+        }
+      );
+    });
 
     // Set db default values
     return db.defaults({ posts: [] }).write()
