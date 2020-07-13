@@ -19,7 +19,7 @@ router.get('/getYtMusic', function (req, res) {
   res.send(musicList);
 })
 
-var event = schedule.scheduleJob("*/30 * * * *", youtubeStreamListUpdate());
+var event = schedule.scheduleJob("*/20 * * * *", youtubeStreamListUpdate);
 
 function youtubeStreamListUpdate() {
   var options = {
@@ -74,5 +74,7 @@ function ytConverter(ytObject) {
 
   return lsObject;
 }
+
+youtubeStreamListUpdate();
 
 module.exports = router;
